@@ -13,6 +13,7 @@ export const env = createEnv({
     SUPABASE_ACCESS_TOKEN: z.string(),
     POLAR_SECRET_KEY: z.string(),
     POLAR_WEBHOOK_SECRET: z.string(),
+    POLAR_SUCCESS_URL: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_BASE_URL: z.string(),
@@ -31,6 +32,7 @@ export const env = createEnv({
     SUPABASE_ACCESS_TOKEN: process.env.SUPABASE_ACCESS_TOKEN,
     POLAR_SECRET_KEY: process.env.POLAR_SECRET_KEY,
     POLAR_WEBHOOK_SECRET: process.env.POLAR_WEBHOOK_SECRET,
+    POLAR_SUCCESS_URL: process.env.POLAR_SUCCESS_URL,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_KEY: process.env.NEXT_PUBLIC_SUPABASE_KEY,
