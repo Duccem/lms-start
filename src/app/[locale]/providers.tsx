@@ -3,7 +3,7 @@
 import { I18nProviderClient } from "@/lib/translation/client";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ThemeProvider } from "next-themes";
-import { Toaster } from "sonner";
+import { Toaster } from "@/lib/ui/components/sonner";
 
 export const Providers = ({
   children,
