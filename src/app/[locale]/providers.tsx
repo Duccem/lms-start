@@ -1,6 +1,8 @@
 "use client";
 
 import { I18nProviderClient } from "@/lib/translation/client";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { ThemeProvider } from "next-themes";
 
 export const Providers = ({
   children,
@@ -8,5 +10,11 @@ export const Providers = ({
 }: {
   children: React.ReactNode;
   locale: string;
-}) => <I18nProviderClient locale={locale}>{children}</I18nProviderClient>;
+}) => (
+  <ThemeProvider defaultTheme="system" attribute="class" enableSystem>
+    <NuqsAdapter>
+      <I18nProviderClient locale={locale}>{children}</I18nProviderClient>
+    </NuqsAdapter>
+  </ThemeProvider>
+);
 
