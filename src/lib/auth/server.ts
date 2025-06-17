@@ -4,6 +4,8 @@ import { database } from "../database";
 import { env } from "../env";
 import { nextCookies } from "better-auth/next-js";
 import { bearer, emailOTP } from "better-auth/plugins";
+import { headers } from "next/headers";
+import { cache } from "react";
 
 export const auth = betterAuth({
   database: drizzleAdapter(database, { provider: "pg" }),
@@ -38,5 +40,13 @@ export const auth = betterAuth({
       },
     },
   },
+});
+export type BetterSession = typeof auth.$Infer.Session;
+export type BetterUser = typeof auth.$Infer.Session.user;
+
+export const getSession = cache(async () => {
+  return await auth.api.getSession({
+    headers: await headers(),
+  });
 });
 
