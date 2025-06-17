@@ -3,6 +3,7 @@
 import { I18nProviderClient } from "@/lib/translation/client";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ThemeProvider } from "next-themes";
+import { Toaster } from "sonner";
 
 export const Providers = ({
   children,
@@ -15,6 +16,7 @@ export const Providers = ({
     <NuqsAdapter>
       <I18nProviderClient locale={locale}>{children}</I18nProviderClient>
     </NuqsAdapter>
+    <Toaster />
   </ThemeProvider>
 );
 
