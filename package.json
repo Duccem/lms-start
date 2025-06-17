@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
+    "@polar-sh/nextjs": "^0.4.0",
+    "@polar-sh/sdk": "^0.33.2",
     "@radix-ui/react-slot": "^1.2.3",
     "@t3-oss/env-nextjs": "^0.13.8",
     "better-auth": "^1.2.9",
