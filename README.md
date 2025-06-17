@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LMS Start
+
+This is a starter project for a Learning Management System (LMS) built with Next.js, TypeScript, and other modern technologies.
+
+## Technologies Used
+
+- **Framework:** [Next.js](https://nextjs.org/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Authentication:** [Better Auth](https://better-auth.com/)
+- **Database:** [Drizzle ORM](https://orm.drizzle.team/) with [Neon](https://neon.tech/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components:** [Shadcn](https://ui.shadcn.com/)
+- **Internationalization:** [next-international](https://github.com/QuiiBz/next-international)
+- **AI:** [Google AI SDK](https://ai.google.dev/)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js (v20 or higher)
+- npm, yarn, or pnpm
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/lms-start.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd lms-start
+   ```
+3. Install the dependencies:
+   ```bash
+   npm install
+   ```
+
+### Running the Development Server
+
+To start the development server, run the following command:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `dev`: Starts the development server with Turbopack.
+- `build`: Creates a production build of the application.
+- `start`: Starts the production server.
+- `lint`: Lints the codebase using Next.js's built-in ESLint configuration.
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+The project structure is organized as follows:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+.
+├── public/
+├── src/
+│   ├── app/
+│   ├── assets/
+│   ├── lib/
+│   ├── modules/
+│   └── middleware.ts
+├── components.json
+├── drizzle.config.ts
+├── next.config.ts
+├── package.json
+└── tsconfig.json
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/app`: Contains the application's routes and pages.
+- `src/lib`: Contains the application's core logic, such as authentication, database, and payment processing.
+- `src/modules`: Contains the different modules of the LMS, such as courses, users, and enrollments.
 
-## Deploy on Vercel
+## Database
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The database schema is defined in `src/lib/database/schema.ts` using Drizzle ORM. To apply database migrations, you can use the following command:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npx drizzle-kit generate
+```
+
+This will generate the necessary SQL files to update the database schema.
+
