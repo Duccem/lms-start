@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/google": "^1.2.19",
     "@neondatabase/serverless": "^1.0.1",
     "@polar-sh/nextjs": "^0.4.0",
     "@polar-sh/sdk": "^0.33.2",
@@ -16,6 +17,7 @@
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.50.0",
     "@t3-oss/env-nextjs": "^0.13.8",
+    "ai": "^4.3.16",
     "better-auth": "^1.2.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
