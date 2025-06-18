@@ -6,6 +6,7 @@ import { nextCookies } from "better-auth/next-js";
 import { bearer, emailOTP } from "better-auth/plugins";
 import { headers } from "next/headers";
 import { cache } from "react";
+import { novu } from "../notifications";
 
 export const auth = betterAuth({
   database: drizzleAdapter(database, { provider: "pg" }),
@@ -28,9 +29,16 @@ export const auth = betterAuth({
     bearer(),
     emailOTP({
       sendVerificationOTP: async ({ email, otp, type }) => {
-        // Implement your email sending logic here
-        console.log(`Sending OTP ${otp} to ${email} for ${type} verification.`);
-        // For example, you could use a service like SendGrid or Nodemailer
+        await novu.trigger({
+          workflowId: type,
+          to: {
+            subscriberId: email,
+            email,
+          },
+          payload: {
+            code: otp,
+          },
+        });
       },
       sendVerificationOnSignUp: true,
       otpLength: 6,
