@@ -10,14 +10,11 @@ const I18nMiddleware = createI18nMiddleware({
   urlMappingStrategy: "rewrite",
 });
 export default async function middleware(req: NextRequest) {
-  if (req.nextUrl.pathname.startsWith("/api")) {
-    return NextResponse.next();
-  }
   const response = I18nMiddleware(req);
 
   return betterAuthMiddleware(req, response, publicRoutes);
 }
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(!api|trpc)(.*)"],
+  matcher: ["/((?!api|_next|[\\w-]+\\.\\w+).*)"],
 };
 

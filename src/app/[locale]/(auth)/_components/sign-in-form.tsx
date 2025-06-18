@@ -82,7 +82,7 @@ const SignInForm = () => {
             <FormItem>
               <FormLabel>Correo</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Correo" />
+                <Input {...field} placeholder="o@ejemplo.com" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -95,7 +95,7 @@ const SignInForm = () => {
             <FormItem>
               <FormLabel>Contraseña</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Contraseña" type="password" />
+                <Input {...field} placeholder="******" type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
