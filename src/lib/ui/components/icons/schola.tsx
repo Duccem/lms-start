@@ -1,4 +1,3 @@
-import * as React from "react";
 import { SVGProps } from "react";
 const ScholaIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -9,9 +8,9 @@ const ScholaIcon = (props: SVGProps<SVGSVGElement>) => (
     viewBox="0 0 24 24"
     {...props}
   >
-    <path fill="#3182CE" d="M12 2 2 7v10l10 5 10-5V7L12 2Z" />
-    <path fill="#4299E1" d="M12 2 2 7v5l10 5 10-5V7L12 2Z" />
-    <path fill="#3182CE" d="M12 17 2 12v5l10 5 10-5v-5l-10 5Z" />
+    <path fill="#ffe0c2" d="M12 2 2 7v10l10 5 10-5V7L12 2Z" />
+    <path fill="#ffe0c2" d="M12 2 2 7v5l10 5 10-5V7L12 2Z" />
+    <path fill="#fbb874" d="M12 17 2 12v5l10 5 10-5v-5l-10 5Z" />
   </svg>
 );
 export default ScholaIcon;

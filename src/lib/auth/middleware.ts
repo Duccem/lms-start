@@ -27,10 +27,6 @@ export async function betterAuthMiddleware(
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
-  if (session && publicRoutes.includes(newUrl.pathname)) {
-    return NextResponse.redirect(new URL("/home", req.url));
-  }
-
   return response;
 }
 
