@@ -17,6 +17,11 @@ export const auth = betterAuth({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
+    microsoft: {
+      clientId: env.MICROSOFT_CLIENT_ID,
+      clientSecret: env.MICROSOFT_CLIENT_SECRET,
+      tenantId: "common",
+    },
   },
   plugins: [
     nextCookies(),
@@ -28,15 +33,17 @@ export const auth = betterAuth({
         // For example, you could use a service like SendGrid or Nodemailer
       },
       sendVerificationOnSignUp: true,
-      otpLength: 4,
+      otpLength: 6,
     }),
   ],
   advanced: {
-    generateId: false,
+    database: {
+      generateId: false,
+    },
     cookiePrefix: "",
     cookies: {
       session_token: {
-        name: "recipe_session",
+        name: "scholar_session",
       },
     },
   },
