@@ -12,6 +12,7 @@ import {
 } from "@/lib/ui/components/form";
 import ImagePicker from "@/lib/ui/components/image-picker";
 import { Input } from "@/lib/ui/components/input";
+import { RichText } from "@/lib/ui/components/rich-text";
 import {
   Select,
   SelectContent,
@@ -32,9 +33,7 @@ import { z } from "zod";
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters long"),
-  description: z
-    .string()
-    .min(20, "Description must be at least 20 characters long"),
+  description: z.string().min(20, "Description must be at least 20 characters long"),
   summary: z.string().min(10, "Summary must be at least 10 characters long"),
   price: z.coerce.number().min(1, "Price must be a non-negative number"),
   duration: z.coerce.number().min(0, "Duration must be a non-negative integer"),
@@ -45,7 +44,7 @@ const formSchema = z.object({
     .min(3, "Slug must be at least 3 characters long")
     .regex(
       /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-      "Slug must be lowercase and can only contain letters, numbers, and hyphens"
+      "Slug must be lowercase and can only contain letters, numbers, and hyphens",
     ),
   status: z.enum(["draft", "published"]).default("draft"),
 });
@@ -122,7 +121,7 @@ export const CreateCourseForm = () => {
           async (data: FormSchema) => {
             await mutateAsync(data);
           },
-          (e) => console.error(e)
+          (e) => console.error(e),
         )}
         className="space-y-4"
       >
@@ -176,11 +175,7 @@ export const CreateCourseForm = () => {
             <FormItem>
               <FormLabel>Resumen</FormLabel>
               <FormControl>
-                <Textarea
-                  {...field}
-                  className="resize-none min-h-[100px]"
-                  rows={6}
-                />
+                <Textarea {...field} className="resize-none min-h-[100px]" rows={6} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -193,20 +188,13 @@ export const CreateCourseForm = () => {
             <FormItem>
               <FormLabel>Descripcion</FormLabel>
               <FormControl>
-                <Textarea
-                  {...field}
-                  className="resize-none min-h-[100px]"
-                  rows={6}
-                />
+                <RichText field={field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <ImagePicker
-          placeholder="Portada del curso"
-          setFileAction={(file) => setThumbnail(file)}
-        />
+        <ImagePicker placeholder="Portada del curso" setFileAction={(file) => setThumbnail(file)} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -317,4 +305,3 @@ export const CreateCourseForm = () => {
     </Form>
   );
 };
-

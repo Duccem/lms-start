@@ -12,7 +12,7 @@ export default function ImagePicker({
   placeholder?: string;
   setFileAction?: (file: File) => void;
 }) {
-  const maxSizeMB = 5;
+  const maxSizeMB = 10;
   const maxSize = maxSizeMB * 1024 * 1024; // 5MB default
 
   const [
@@ -53,17 +53,13 @@ export default function ImagePicker({
           data-dragging={isDragging || undefined}
           className="border-input hover:bg-accent/50 data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center justify-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors has-disabled:pointer-events-none has-disabled:opacity-50 has-[img]:border-none has-[input:focus]:ring-[3px]"
         >
-          <input
-            {...getInputProps()}
-            className="sr-only"
-            aria-label="Upload file"
-          />
+          <input {...getInputProps()} className="sr-only" aria-label="Upload file" />
           {previewUrl ? (
             <div className="absolute inset-0">
               <img
                 src={previewUrl}
                 alt={files[0]?.file?.name || "Uploaded image"}
-                className="size-full object-cover"
+                className="size-full object-contain"
               />
             </div>
           ) : (
@@ -80,9 +76,7 @@ export default function ImagePicker({
               <p className="mb-1.5 text-sm font-medium">
                 Suelta tu imagen aquí o haz clic para buscar
               </p>
-              <p className="text-muted-foreground text-xs">
-                Tamaño máximo: {maxSizeMB}MB
-              </p>
+              <p className="text-muted-foreground text-xs">Tamaño máximo: {maxSizeMB}MB</p>
             </div>
           )}
         </div>
@@ -101,10 +95,7 @@ export default function ImagePicker({
       </div>
 
       {errors.length > 0 && (
-        <div
-          className="text-destructive flex items-center gap-1 text-xs"
-          role="alert"
-        >
+        <div className="text-destructive flex items-center gap-1 text-xs" role="alert">
           <AlertCircleIcon className="size-3 shrink-0" />
           <span>{errors[0]}</span>
         </div>
@@ -112,4 +103,3 @@ export default function ImagePicker({
     </div>
   );
 }
-
