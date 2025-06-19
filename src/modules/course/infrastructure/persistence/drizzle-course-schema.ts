@@ -28,6 +28,7 @@ export const course = pgTable("courses", {
   slug: text("slug").notNull().unique(),
   thumbnail: text("thumbnail"),
   price: integer("price").notNull(),
+  duration: integer("duration").notNull().default(0), // Duration in minutes
   level: courseLevelEnum("level").notNull().default("beginner"),
   status: courseStatusEnum("status").notNull().default("draft"),
   category: text("category").notNull(),

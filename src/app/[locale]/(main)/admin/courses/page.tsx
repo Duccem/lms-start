@@ -1,5 +1,6 @@
 import { buttonVariants } from "@/lib/ui/components/button";
 import Link from "next/link";
+import CourseList from "./_components/course-list";
 
 export default function Page() {
   return (
@@ -10,8 +11,7 @@ export default function Page() {
           Agregar
         </Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+      <CourseList />
     </div>
   );
 }
-

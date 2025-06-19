@@ -4,6 +4,7 @@ import { Uuid } from "@/lib/ddd/core/value-objects/uuid";
 import { Primitives } from "@/lib/ddd/types/primitives";
 import { CourseCategory } from "./value-objects/course-category";
 import { CourseDescription } from "./value-objects/course-description";
+import { CourseDuration } from "./value-objects/course-duration";
 import { CourseLevel } from "./value-objects/course-level";
 import { CoursePrice } from "./value-objects/course-price";
 import { CourseSlug } from "./value-objects/course-slug";
@@ -21,6 +22,7 @@ export class Course extends Aggregate {
     public slug: CourseSlug,
     public thumbnail: CourseThumbnail,
     public price: CoursePrice,
+    public duration: CourseDuration,
     public level: CourseLevel,
     public status: CourseStatus,
     public category: CourseCategory,
@@ -40,6 +42,7 @@ export class Course extends Aggregate {
       slug: this.slug.value,
       thumbnail: this.thumbnail.value,
       price: this.price.value,
+      duration: this.duration.value,
       level: this.level.value,
       status: this.status.value,
       category: this.category.value,
@@ -58,6 +61,7 @@ export class Course extends Aggregate {
       new CourseSlug(data.slug),
       new CourseThumbnail(data.thumbnail),
       new CoursePrice(data.price),
+      new CourseDuration(data.duration),
       new CourseLevel(data.level),
       new CourseStatus(data.status),
       new CourseCategory(data.category),
@@ -73,6 +77,7 @@ export class Course extends Aggregate {
     slug: string,
     thumbnail: string,
     price: number,
+    duration: number,
     level: string,
     status: string,
     category: string,
@@ -86,6 +91,7 @@ export class Course extends Aggregate {
       new CourseSlug(slug),
       new CourseThumbnail(thumbnail),
       new CoursePrice(price),
+      new CourseDuration(duration),
       CourseLevel.fromString(level),
       CourseStatus.fromString(status),
       new CourseCategory(category),

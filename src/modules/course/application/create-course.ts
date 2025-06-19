@@ -13,6 +13,7 @@ export class CreateCourse {
       data.slug,
       data.thumbnail,
       data.price,
+      data.duration,
       data.level,
       data.status,
       data.category,
