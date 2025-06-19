@@ -1,7 +1,7 @@
 import { Primitives } from "@/lib/ddd/types/primitives";
 import { Course } from "../../domain/course";
 
-export async function createCourse(data: Partial<Primitives<Course>>) {
+export async function createCourse(data: Partial<Primitives<Course>>): Promise<void> {
   const response = await fetch("/api/course", {
     method: "POST",
     headers: {
