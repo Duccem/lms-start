@@ -1,6 +1,6 @@
-import { v4, validate } from 'uuid';
-import { FormatError } from '../errors/format-error';
-import { StringValueObject } from '../value-object';
+import { v4, validate } from "uuid";
+import { FormatError } from "../errors/format-error";
+import { StringValueObject } from "../value-object";
 
 export class Uuid extends StringValueObject {
   constructor(value: string) {
@@ -24,5 +24,12 @@ export class Uuid extends StringValueObject {
 
   public toString(): string {
     return this.value.toString();
+  }
+
+  static fromString(value: string): Uuid {
+    if (!this.validateID(value)) {
+      throw new FormatError(`Invalid UUID format: ${value}`);
+    }
+    return new Uuid(value);
   }
 }
