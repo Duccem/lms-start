@@ -1,6 +1,6 @@
 import { routeHandler } from "@/lib/api/route-handler";
 import { Primitives } from "@/lib/ddd/types/primitives";
-import { CreateCourse } from "@/modules/course/application/create-course";
+import { SaveCourse } from "@/modules/course/application/save-course";
 import { SearchCourses } from "@/modules/course/application/search-courses";
 import { Course } from "@/modules/course/domain/course";
 import { DrizzleCourseRepository } from "@/modules/course/infrastructure/persistence/drizzle-course-repository";
@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const createCourseSchema = z.object({
+  id: z.string().optional(),
   title: z.string().min(3, "Title must be at least 3 characters long"),
   description: z.string().min(20, "Description must be at least 20 characters long"),
   summary: z.string().min(10, "Summary must be at least 10 characters long"),
@@ -28,7 +29,7 @@ const createCourseSchema = z.object({
 
 export const POST = routeHandler(async ({ req, user, params, searchParams }) => {
   const parsedInpit = createCourseSchema.parse(await req.json());
-  const service = new CreateCourse(new DrizzleCourseRepository());
+  const service = new SaveCourse(new DrizzleCourseRepository());
 
   await service.execute({
     ...parsedInpit,

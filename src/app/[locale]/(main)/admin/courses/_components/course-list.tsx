@@ -69,7 +69,7 @@ const CourseList = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-48" align="end">
                 <DropdownMenuItem asChild>
-                  <Link href={`/admin/course/${course.id}/edit`}>
+                  <Link href={`/admin/courses/${course.id}/edit`}>
                     <Pencil />
                     Editar curso
                   </Link>
@@ -125,7 +125,7 @@ const CourseList = () => {
               </div>
             </div>
             <Link
-              href={`/admin/courses/${course.id}`}
+              href={`/admin/courses/${course.id}/edit`}
               className={buttonVariants({ size: "lg" }) + " w-full"}
             >
               <Pencil />

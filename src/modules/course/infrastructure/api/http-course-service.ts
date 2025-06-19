@@ -22,3 +22,12 @@ export async function fetchCourses(): Promise<Primitives<Course>[]> {
   const data = await response.json();
   return data.data as Primitives<Course>[];
 }
+
+export async function fetchCourseById(id: string): Promise<Primitives<Course>> {
+  const response = await fetch(`/api/course/${id}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch course");
+  }
+  const data = await response.json();
+  return data.data as Primitives<Course>;
+}

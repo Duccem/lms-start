@@ -28,7 +28,7 @@ export class Course extends Aggregate {
     public category: CourseCategory,
     public authorId: Uuid,
     createdAt: DateValueObject,
-    updatedAt: DateValueObject
+    updatedAt: DateValueObject,
   ) {
     super(id, createdAt, updatedAt);
   }
@@ -67,10 +67,11 @@ export class Course extends Aggregate {
       new CourseCategory(data.category),
       new Uuid(data.authorId),
       new DateValueObject(data.createdAt),
-      new DateValueObject(data.updatedAt)
+      new DateValueObject(data.updatedAt),
     );
   }
   static create(
+    id: string,
     title: string,
     summary: string,
     description: string,
@@ -81,10 +82,10 @@ export class Course extends Aggregate {
     level: string,
     status: string,
     category: string,
-    authorId: string
+    authorId: string,
   ): Course {
     return new Course(
-      Uuid.random(),
+      Uuid.fromString(id),
       new CourseTitle(title),
       new CourseSummary(summary),
       new CourseDescription(description),
@@ -97,8 +98,17 @@ export class Course extends Aggregate {
       new CourseCategory(category),
       Uuid.fromString(authorId),
       DateValueObject.today(),
-      DateValueObject.today()
+      DateValueObject.today(),
     );
   }
-}
 
+  update(data: Primitives<Course>) {
+    Course.fromPrimitives({
+      ...this.toPrimitives(),
+      ...data,
+      id: this.id.value, // Ensure the ID remains the same
+      createdAt: this.createdAt.value, // Keep the original creation date
+      updatedAt: DateValueObject.today().value, // Update the updatedAt to now
+    });
+  }
+}

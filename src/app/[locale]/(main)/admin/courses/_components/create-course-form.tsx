@@ -1,4 +1,6 @@
 "use client";
+import { Uuid } from "@/lib/ddd/core/value-objects/uuid";
+import { Primitives } from "@/lib/ddd/types/primitives";
 import { createClient } from "@/lib/supabase/client";
 import { upload } from "@/lib/supabase/storage";
 import { Button } from "@/lib/ui/components/button";
@@ -21,6 +23,7 @@ import {
   SelectValue,
 } from "@/lib/ui/components/select";
 import { Textarea } from "@/lib/ui/components/textarea";
+import { Course } from "@/modules/course/domain/course";
 import { createCourse } from "@/modules/course/infrastructure/api/http-course-service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -37,7 +40,7 @@ const formSchema = z.object({
   summary: z.string().min(10, "Summary must be at least 10 characters long"),
   price: z.coerce.number().min(1, "Price must be a non-negative number"),
   duration: z.coerce.number().min(0, "Duration must be a non-negative integer"),
-  level: z.enum(["beginner", "intermediate", "advanced"]).default("beginner"),
+  level: z.enum(["beginner", "intermediate", "advanced"]).default("beginner").optional(),
   category: z.string().min(1, "Category is required"),
   slug: z
     .string()
@@ -46,7 +49,7 @@ const formSchema = z.object({
       /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
       "Slug must be lowercase and can only contain letters, numbers, and hyphens",
     ),
-  status: z.enum(["draft", "published"]).default("draft"),
+  status: z.enum(["draft", "published", "archived"]).default("draft").optional(),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -66,20 +69,20 @@ const validCategories = [
 
 const validLevels = ["beginner", "intermediate", "advanced"];
 
-export const CreateCourseForm = () => {
+export const CreateCourseForm = ({ data }: { data?: Primitives<Course> }) => {
   const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const form = useForm({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      summary: "",
-      price: 0,
-      duration: 0,
-      level: "beginner",
-      category: "",
-      slug: "",
-      status: "draft",
+      title: data?.title || "",
+      slug: data?.slug || "",
+      summary: data?.summary || "",
+      description: data?.description || "",
+      price: data?.price || 0,
+      duration: data?.duration || 0,
+      category: data?.category || "",
+      status: data?.status || "draft",
+      level: data?.level || "beginner",
     },
   });
   const { isSubmitting } = form.formState;
@@ -87,29 +90,30 @@ export const CreateCourseForm = () => {
   const supabase = createClient();
   const queryClient = useQueryClient();
   const { mutateAsync, mutate } = useMutation({
-    mutationFn: async (data: FormSchema) => {
-      if (!thumbnail) return;
-      const thumbnailUrl = await upload(supabase, {
-        bucket: "course-thumbnails",
-        path: [thumbnail.name],
-        file: thumbnail,
-      });
-      if (!thumbnailUrl) {
-        throw new Error("Error uploading thumbnail");
+    mutationFn: async (values: FormSchema) => {
+      let thumbnailUrl = data?.thumbnail;
+      if (thumbnail && thumbnail.name !== "initial-file") {
+        thumbnailUrl = await upload(supabase, {
+          bucket: "course-thumbnails",
+          path: [thumbnail.name],
+          file: thumbnail,
+        });
       }
       const courseData = {
-        ...data,
+        ...values,
         thumbnail: thumbnailUrl,
+        id: data?.id || Uuid.random().toString(), // Use existing ID if editing, otherwise create a new one
       };
       await createCourse(courseData as any); // Adjust type as needed
     },
     onError: (error) => {
-      console.error("Error creating course:", error);
-      toast.error("Error creating course. Please try again.");
+      console.error("Error saving course:", error);
+      toast.error("Error guardando el curso");
     },
     onSuccess: () => {
-      toast.success("Course created successfully!");
+      toast.success("Curso guardado exitosamente");
       queryClient.invalidateQueries({ queryKey: ["courses"] }); // Adjust query key as needed
+      queryClient.invalidateQueries({ queryKey: ["course", data?.id] }); // Adjust query key as needed
       router.push("/admin/courses");
     },
   });
@@ -194,7 +198,11 @@ export const CreateCourseForm = () => {
             </FormItem>
           )}
         />
-        <ImagePicker placeholder="Portada del curso" setFileAction={(file) => setThumbnail(file)} />
+        <ImagePicker
+          placeholder="Portada del curso"
+          setFileAction={(file) => setThumbnail(file)}
+          value={data?.thumbnail}
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -294,7 +302,7 @@ export const CreateCourseForm = () => {
           )}
         />
         <Button type="submit" disabled={isSubmitting}>
-          Crear curso
+          Guardar curso
           {isSubmitting ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (

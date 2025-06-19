@@ -8,9 +8,11 @@ import { useEffect } from "react";
 export default function ImagePicker({
   placeholder,
   setFileAction,
+  value,
 }: {
   placeholder?: string;
   setFileAction?: (file: File) => void;
+  value?: string | null;
 }) {
   const maxSizeMB = 10;
   const maxSize = maxSizeMB * 1024 * 1024; // 5MB default
@@ -29,6 +31,9 @@ export default function ImagePicker({
   ] = useFileUpload({
     accept: "image/*",
     maxSize,
+    initialFiles: value
+      ? [{ id: "initial-file", name: "initial-file", size: 5000, type: "image/png", url: value }]
+      : undefined,
   });
 
   const previewUrl = files[0]?.preview || null;
