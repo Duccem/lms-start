@@ -27,7 +27,7 @@ const SignedUser = ({ user }: { user: BetterUser }) => {
   };
   return (
     <>
-      <Link href={"/home"} className={buttonVariants()}>
+      <Link href={"/admin/dashboard"} className={buttonVariants()}>
         Dashboard
       </Link>
       <DropdownMenu>

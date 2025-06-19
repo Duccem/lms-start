@@ -14,7 +14,6 @@ import {
 import Google from "@/lib/ui/components/icons/google";
 import Microsoft from "@/lib/ui/components/icons/microsoft";
 import { Input } from "@/lib/ui/components/input";
-import { Label } from "@/lib/ui/components/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -46,7 +45,7 @@ const SignInForm = () => {
   const socialSignIn = async (provider: "google" | "microsoft") => {
     await authClient.signIn.social({
       provider,
-      callbackURL: "/home",
+      callbackURL: "/admin/dashboard",
     });
   };
 
@@ -56,11 +55,11 @@ const SignInForm = () => {
         email: data.email,
         password: data.password,
         rememberMe: data.rememberMe,
-        callbackURL: "/home",
+        callbackURL: "/admin/dashboard",
       });
       toast.success("¡Has iniciado sesión correctamente!");
       form.reset();
-      router.push("/home");
+      router.push("/admin/dashboard");
     } catch (error) {
       console.error(error);
       toast.error(

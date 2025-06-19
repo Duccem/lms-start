@@ -5,7 +5,6 @@ import { Button } from "@/lib/ui/components/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -85,7 +84,7 @@ const SignUpForm = () => {
         otp: otpCode,
       });
       toast.success("Correo verificado exitosamente, seras redirigido");
-      router.push("/home");
+      router.push("/admin/dashboard");
       console.log("Verificación exitosa");
     } catch (error) {
       console.error("Error al verificar el correo:", error);

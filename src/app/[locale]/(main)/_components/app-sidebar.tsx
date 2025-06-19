@@ -21,12 +21,12 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/home",
+      url: "/admin/dashboard",
       icon: IconDashboard,
     },
     {
       title: "Cursos",
-      url: "/courses",
+      url: "/admin/courses",
       icon: IconListDetails,
     },
   ],
