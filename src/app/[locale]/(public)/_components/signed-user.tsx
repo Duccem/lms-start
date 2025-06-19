@@ -11,9 +11,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/lib/ui/components/dropdown-menu";
-import { LogOut } from "lucide-react";
+import { IconListDetails, IconUserCircle } from "@tabler/icons-react";
+import { HandCoins, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -37,9 +39,19 @@ const SignedUser = ({ user }: { user: BetterUser }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" sideOffset={10}>
           <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
-          <DropdownMenuItem>Perfil</DropdownMenuItem>
-          <DropdownMenuItem>Cursos</DropdownMenuItem>
-          <DropdownMenuItem>Subscription</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <IconUserCircle /> Perfil
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <IconListDetails />
+            Cursos
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <HandCoins />
+            Subscription
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut />
             Salir

@@ -23,15 +23,26 @@ import {
   DropdownMenuTrigger,
 } from "@/lib/ui/components/dropdown-menu";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/lib/ui/components/select";
+import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/lib/ui/components/sidebar";
+import { House, SunMoon } from "lucide-react";
+import { useTheme } from "next-themes";
+import Link from "next/link";
 import { useSession } from "./user-provider";
 
 export function NavUser({}: {}) {
   const { user } = useSession();
+  const { theme, setTheme } = useTheme();
   const { isMobile } = useSidebar();
 
   return (
@@ -43,7 +54,7 @@ export function NavUser({}: {}) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
+              <Avatar className="h-8 w-8 rounded-lg ">
                 <AvatarImage src={user.image!} alt={user.name} />
                 <AvatarFallback className="rounded-lg">
                   {user.name.charAt(0).toUpperCase()}
@@ -95,10 +106,50 @@ export function NavUser({}: {}) {
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
+            <DropdownMenuItem>
+              <Link href={"/"} className="flex items-center gap-2">
+                <House />
+                Home
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <div className="flex justify-between items-center gap-3 py-3 pr-3">
+                <div className="ml-2 flex justify-start items-center gap-2">
+                  <SunMoon className="size-4" />
+                  Tema
+                </div>
+                <Select
+                  defaultValue={theme}
+                  onValueChange={(value) => setTheme(value)}
+                >
+                  <SelectTrigger className=" w-1/2 p-2 h-[25px]">
+                    <SelectValue placeholder="select" />
+                  </SelectTrigger>
+                  <SelectContent className="">
+                    <SelectItem value={"light"}>
+                      <span className="flex w-full justify-between items-center gap-3">
+                        Light
+                      </span>
+                    </SelectItem>
+                    <SelectItem value={"dark"}>
+                      <span className="flex w-full justify-between items-center gap-3">
+                        Dark
+                      </span>
+                    </SelectItem>
+                    <SelectItem value={"system"}>
+                      <span className="flex w-full justify-between items-center gap-3">
+                        System
+                      </span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <IconLogout />
-              Log out
+              Salir
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

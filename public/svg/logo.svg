@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="100" height="100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <!-- Book/Graduation Cap inspired shape -->
-    <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" fill="#3182CE"/> <!-- Primary blue color -->
-    <path d="M12 2L2 7V12L12 17L22 12V7L12 2Z" fill="#4299E1"/> <!-- Lighter blue for depth -->
-    <path d="M12 17L2 12V17L12 22L22 17V12L12 17Z" fill="#3182CE"/> <!-- Repeat primary blue for bottom half -->
+    <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" fill="#ffe0c2"/> <!-- Primary blue color -->
+    <path d="M12 2L2 7V12L12 17L22 12V7L12 2Z" fill="#ffe0c2"/> <!-- Lighter blue for depth -->
+    <path d="M12 17L2 12V17L12 22L22 17V12L12 17Z" fill="#fbb874"/> <!-- Repeat primary blue for bottom half -->
     <!-- A simple 'S' or 'P' could be added inside, or keep it abstract for versatility -->
 </svg>
