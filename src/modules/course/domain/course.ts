@@ -69,7 +69,7 @@ export class Course extends Aggregate {
       new CourseStatus(data.status),
       new CourseCategory(data.category),
       new Uuid(data.authorId),
-      data.chapters.map((chapter) => Chapter.fromPrimitives(chapter)),
+      data.chapters ? data.chapters.map((chapter) => Chapter.fromPrimitives(chapter)) : [],
       new DateValueObject(data.createdAt),
       new DateValueObject(data.updatedAt),
     );
@@ -115,5 +115,28 @@ export class Course extends Aggregate {
       createdAt: this.createdAt.value, // Keep the original creation date
       updatedAt: DateValueObject.today().value, // Update the updatedAt to now
     });
+  }
+
+  hasChapter(chapterId: string): boolean {
+    return this.chapters.some((chapter) => chapter.id.value === chapterId);
+  }
+
+  saveChapter(chapter: Primitives<Chapter>): void {
+    if (this.hasChapter(chapter.id)) {
+      const existingChapterIndex = this.chapters.findIndex((c) => c.id.value === chapter.id);
+      this.chapters[existingChapterIndex] = Chapter.fromPrimitives(chapter);
+      this.chapters[existingChapterIndex].updatedAt = DateValueObject.today();
+    } else {
+      this.chapters.push(
+        Chapter.create(
+          chapter.id,
+          this.id.value,
+          chapter.title,
+          chapter.description,
+          chapter.position,
+        ),
+      );
+    }
+    this.updatedAt = DateValueObject.today();
   }
 }

@@ -27,11 +27,13 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ChevronDown, ChevronUpIcon, FileText, GripVertical, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUpIcon, FileText, GripVertical, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { CreateChapterSheet, EditChapterSheet } from "./chapter-sheets";
 
 const CourseChapters = ({ data }: { data: Primitives<Course> }) => {
+  const [editing, setEditing] = useState<string | null>(null);
   const initialItems = data.chapters.map((chapter) => ({
     id: chapter.id,
     position: chapter.position,
@@ -74,19 +76,22 @@ const CourseChapters = ({ data }: { data: Primitives<Course> }) => {
     );
   }
 
+  const setIsOpen = (id: string | boolean) => {
+    if (id) {
+      setEditing(id as string);
+    } else {
+      setEditing(null);
+    }
+  };
+
+  const selectedChapter = data.chapters.find((chapter) => chapter.id === editing);
+
   return (
     <DndContext collisionDetection={rectIntersection} onDragEnd={handleDragEnd} sensors={sensors}>
       <div className="flex flex-col gap-4 p-4">
         <div className="flex items-center justify-between mb-4">
           <p className="text-lg font-semibold ">Capítulos</p>
-          <Button>
-            <Link
-              href={`/admin/courses/${data.id}/create-chapter`}
-              className="flex items-center gap-2"
-            >
-              <span>Nuevo Capítulo</span>
-            </Link>
-          </Button>
+          <CreateChapterSheet courseId={data.id} chaptersLength={data.chapters.length} />
         </div>
         <SortableContext items={items} strategy={verticalListSortingStrategy}>
           {items.map((item) => (
@@ -116,9 +121,14 @@ const CourseChapters = ({ data }: { data: Primitives<Course> }) => {
                           </div>
                         </CollapsibleTrigger>
                       </div>
-                      <Button variant={"ghost"}>
-                        <Trash2 />
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button variant={"ghost"} onClick={() => setIsOpen(item.id)}>
+                          <Pencil />
+                        </Button>
+                        <Button variant={"ghost"}>
+                          <Trash2 />
+                        </Button>
+                      </div>
                     </div>
                     <CollapsibleContent>
                       <div className="">
@@ -172,6 +182,13 @@ const CourseChapters = ({ data }: { data: Primitives<Course> }) => {
           ))}
         </SortableContext>
       </div>
+      <EditChapterSheet
+        open={Boolean(editing)}
+        onOpenChange={setIsOpen}
+        data={selectedChapter}
+        chaptersLength={data.chapters.length}
+        courseId={data.id}
+      />
     </DndContext>
   );
 };
