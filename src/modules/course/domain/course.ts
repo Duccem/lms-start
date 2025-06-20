@@ -124,7 +124,12 @@ export class Course extends Aggregate {
   saveChapter(chapter: Primitives<Chapter>): void {
     if (this.hasChapter(chapter.id)) {
       const existingChapterIndex = this.chapters.findIndex((c) => c.id.value === chapter.id);
-      this.chapters[existingChapterIndex] = Chapter.fromPrimitives(chapter);
+      this.chapters[existingChapterIndex] = Chapter.fromPrimitives({
+        ...this.chapters[existingChapterIndex].toPrimitives(),
+        ...chapter,
+        id: this.chapters[existingChapterIndex].id.value, // Ensure the ID remains the same
+        courseId: this.id.value, // Update courseId to match the current course
+      });
       this.chapters[existingChapterIndex].updatedAt = DateValueObject.today();
     } else {
       this.chapters.push(

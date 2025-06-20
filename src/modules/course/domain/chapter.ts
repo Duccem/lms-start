@@ -44,7 +44,9 @@ export class Chapter {
       new ChapterTitle(data.title),
       new ChapterDescription(data.description),
       new ChapterPosition(data.position),
-      data.lessons.map((lesson) => Lesson.fromPrimitives(lesson)),
+      data.lessons
+        ? data.lessons.map((lesson) => Lesson.fromPrimitives(lesson))
+        : Lesson.initialize(),
       new DateValueObject(data.createdAt),
       new DateValueObject(data.updatedAt),
     );
