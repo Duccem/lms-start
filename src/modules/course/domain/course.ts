@@ -2,6 +2,7 @@ import { Aggregate } from "@/lib/ddd/core/aggregate";
 import { DateValueObject } from "@/lib/ddd/core/value-object";
 import { Uuid } from "@/lib/ddd/core/value-objects/uuid";
 import { Primitives } from "@/lib/ddd/types/primitives";
+import { Chapter } from "./chapter";
 import { CourseCategory } from "./value-objects/course-category";
 import { CourseDescription } from "./value-objects/course-description";
 import { CourseDuration } from "./value-objects/course-duration";
@@ -27,6 +28,7 @@ export class Course extends Aggregate {
     public status: CourseStatus,
     public category: CourseCategory,
     public authorId: Uuid,
+    public chapters: Array<Chapter>,
     createdAt: DateValueObject,
     updatedAt: DateValueObject,
   ) {
@@ -47,6 +49,7 @@ export class Course extends Aggregate {
       status: this.status.value,
       category: this.category.value,
       authorId: this.authorId.value,
+      chapters: this.chapters.map((chapter) => chapter.toPrimitives()),
       createdAt: this.createdAt.value,
       updatedAt: this.updatedAt.value,
     };
@@ -66,6 +69,7 @@ export class Course extends Aggregate {
       new CourseStatus(data.status),
       new CourseCategory(data.category),
       new Uuid(data.authorId),
+      data.chapters.map((chapter) => Chapter.fromPrimitives(chapter)),
       new DateValueObject(data.createdAt),
       new DateValueObject(data.updatedAt),
     );
@@ -97,6 +101,7 @@ export class Course extends Aggregate {
       CourseStatus.fromString(status),
       new CourseCategory(category),
       Uuid.fromString(authorId),
+      Chapter.initialize(), // Initialize with an empty array of chapters
       DateValueObject.today(),
       DateValueObject.today(),
     );

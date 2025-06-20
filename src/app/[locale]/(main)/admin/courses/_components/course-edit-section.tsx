@@ -10,6 +10,7 @@ import {
 import { Skeleton } from "@/lib/ui/components/skeleton";
 import { fetchCourseById } from "@/modules/course/infrastructure/api/http-course-service";
 import { useQuery } from "@tanstack/react-query";
+import CourseChapters from "./course-chapters";
 import { CreateCourseForm } from "./create-course-form";
 
 const CourseEditSection = ({ id }: { id: string }) => {
@@ -67,7 +68,9 @@ const CourseEditSection = ({ id }: { id: string }) => {
               (Puedes editar la estructura del curso, como módulos y lecciones)
             </CardDescription>
           </CardHeader>
-          <CardContent></CardContent>
+          <CardContent>
+            <CourseChapters data={course} />
+          </CardContent>
         </Card>
       </div>
     </div>
