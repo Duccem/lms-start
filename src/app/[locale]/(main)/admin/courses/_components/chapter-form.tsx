@@ -59,7 +59,7 @@ export const ChapterForm = ({
     onSuccess: () => {
       form.reset();
       queryClient.invalidateQueries({
-        queryKey: ["course", courseId],
+        queryKey: ["course"],
       });
     },
   });

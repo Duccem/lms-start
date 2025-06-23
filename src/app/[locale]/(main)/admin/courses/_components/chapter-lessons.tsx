@@ -4,7 +4,7 @@ import { Primitives } from "@/lib/ddd/types/primitives";
 import { Button, buttonVariants } from "@/lib/ui/components/button";
 import { Card } from "@/lib/ui/components/card";
 import { cn } from "@/lib/ui/lib/utils";
-import { Course } from "@/modules/course/domain/course";
+import { Lesson } from "@/modules/course/domain/lesson";
 import {
   DndContext,
   DraggableSyntheticListeners,
@@ -26,12 +26,20 @@ import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-const CourseChapters = ({ data }: { data: Primitives<Course> }) => {
+const ChapterLessons = ({
+  data,
+  chapterId,
+  courseId,
+}: {
+  data: Primitives<Lesson>[];
+  chapterId: string;
+  courseId: string;
+}) => {
   const [editing, setEditing] = useState<string | null>(null);
-  const initialItems = data.chapters.map((chapter) => ({
-    id: chapter.id,
-    position: chapter.position,
-    title: chapter.title,
+  const initialItems = data.map((lesson) => ({
+    id: lesson.id,
+    position: lesson.position,
+    title: lesson.title,
   }));
   const [items, setItems] = useState(initialItems);
   const sensors = useSensors(
@@ -58,15 +66,24 @@ const CourseChapters = ({ data }: { data: Primitives<Course> }) => {
     }
   }
 
-  const selectedChapter = data.chapters.find((chapter) => chapter.id === editing);
+  const setIsOpen = (id: string | boolean) => {
+    if (id) {
+      setEditing(id as string);
+    } else {
+      setEditing(null);
+    }
+  };
 
   return (
     <DndContext collisionDetection={rectIntersection} onDragEnd={handleDragEnd} sensors={sensors}>
       <div className="flex flex-col gap-4 p-4">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-lg font-semibold ">Capítulos</p>
-          <Link href={`/admin/courses/${data.id}/chapter`} className={buttonVariants()}>
-            Agregar capítulo
+          <p className="text-lg font-semibold ">Lecciones</p>
+          <Link
+            href={`/admin/courses/${courseId}/chapter/${chapterId}/lesson`}
+            className={buttonVariants()}
+          >
+            Agregar lección
           </Link>
         </div>
         <SortableContext items={items} strategy={verticalListSortingStrategy}>
@@ -83,19 +100,14 @@ const CourseChapters = ({ data }: { data: Primitives<Course> }) => {
                       >
                         <GripVertical className="size-4" />
                       </Button>
-                      <div className="flex items-center gap-2 cursor-pointer">
-                        <p className="text-lg font-semibold hover:text-primary cursor-pointer">
-                          {item.title}
-                        </p>
-                      </div>
+                      <p className="text-lg font-semibold hover:text-primary cursor-pointer">
+                        {item.title}
+                      </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Link
-                        href={`/admin/courses/${data.id}/chapter/${item.id}`}
-                        className={buttonVariants({ variant: "ghost" })}
-                      >
+                      <Button variant={"ghost"} onClick={() => setIsOpen(item.id)}>
                         <Pencil />
-                      </Link>
+                      </Button>
                       <Button variant={"ghost"}>
                         <Trash2 />
                       </Button>
@@ -111,7 +123,7 @@ const CourseChapters = ({ data }: { data: Primitives<Course> }) => {
   );
 };
 
-export default CourseChapters;
+export default ChapterLessons;
 
 type SortableItemProps = {
   id: string;

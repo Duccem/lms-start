@@ -19,26 +19,31 @@ export class DrizzleCourseRepository implements CourseRepository {
       .values(primitives)
       .onConflictDoUpdate({ target: [course.id], set: primitives })
       .execute();
-    await database
-      .insert(chapter)
-      .values(chapters)
-      .onConflictDoUpdate({
-        target: [chapter.id],
-        set: buildConflictUpdateColumns(chapter, ["description", "position", "title"]),
-      });
-    await database
-      .insert(lesson)
-      .values(lessons)
-      .onConflictDoUpdate({
-        target: [lesson.id],
-        set: buildConflictUpdateColumns(lesson, [
-          "content",
-          "position",
-          "title",
-          "videoUrl",
-          "thumbnail",
-        ]),
-      });
+    if (chapters.length > 0) {
+      await database
+        .insert(chapter)
+        .values(chapters)
+        .onConflictDoUpdate({
+          target: [chapter.id],
+          set: buildConflictUpdateColumns(chapter, ["description", "position", "title"]),
+        });
+    }
+
+    if (lessons.length > 0) {
+      await database
+        .insert(lesson)
+        .values(lessons)
+        .onConflictDoUpdate({
+          target: [lesson.id],
+          set: buildConflictUpdateColumns(lesson, [
+            "type",
+            "position",
+            "title",
+            "thumbnail",
+            "chapterId",
+          ]),
+        });
+    }
   }
 
   async search(criteria: Criteria): Promise<Course[]> {

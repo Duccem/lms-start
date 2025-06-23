@@ -3,6 +3,7 @@ import { DateValueObject } from "@/lib/ddd/core/value-object";
 import { Uuid } from "@/lib/ddd/core/value-objects/uuid";
 import { Primitives } from "@/lib/ddd/types/primitives";
 import { Chapter } from "./chapter";
+import { Lesson } from "./lesson";
 import { CourseCategory } from "./value-objects/course-category";
 import { CourseDescription } from "./value-objects/course-description";
 import { CourseDuration } from "./value-objects/course-duration";
@@ -142,6 +143,37 @@ export class Course extends Aggregate {
         ),
       );
     }
+    this.updatedAt = DateValueObject.today();
+  }
+
+  saveLesson(data: Primitives<Lesson>) {
+    const chapter = this.chapters.find((c) => c.id.value === data.chapterId);
+    if (!chapter) {
+      throw new Error(`Chapter with ID ${data.chapterId} not found in course ${this.id.value}`);
+    }
+    chapter.saveLesson(data);
+    this.updatedAt = DateValueObject.today();
+  }
+
+  /**
+   * Reordena el capítulo indicado por id a la nueva posición y actualiza las posiciones de los demás capítulos.
+   * @param chapterId id del capítulo a mover
+   * @param newPosition nueva posición (base 1)
+   */
+  reorderChapter(chapterId: string, newPosition: number): void {
+    const chapterIndex = this.chapters.findIndex((c) => c.id.value === chapterId);
+    if (chapterIndex === -1) {
+      throw new Error(`Chapter with ID ${chapterId} not found in course ${this.id.value}`);
+    }
+    // Remover el capítulo de su posición actual
+    const [chapter] = this.chapters.splice(chapterIndex, 1);
+    // Insertar en la nueva posición (ajustando a base 0)
+    this.chapters.splice(newPosition - 1, 0, chapter);
+    // Reasignar las posiciones a todos los capítulos
+    this.chapters.forEach((c, idx) => {
+      c.position.value = idx + 1;
+      c.updatedAt = DateValueObject.today();
+    });
     this.updatedAt = DateValueObject.today();
   }
 }

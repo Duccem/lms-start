@@ -18,6 +18,7 @@ export const session = pgTable("session", {
   updatedAt: timestamp("updated_at").notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
+  activeOrganizationId: uuid("active_organization_id"),
   userId: uuid("user_id")
     .notNull()
     .references(() => user.id),

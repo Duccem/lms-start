@@ -19,7 +19,7 @@ const CourseEditSection = ({ id }: { id: string }) => {
     isPending,
     error,
   } = useQuery({
-    queryKey: ["course", id],
+    queryKey: ["course"],
     queryFn: async () => {
       return await fetchCourseById(id);
     },

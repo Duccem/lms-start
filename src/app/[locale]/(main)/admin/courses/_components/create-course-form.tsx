@@ -89,7 +89,7 @@ export const CreateCourseForm = ({ data }: { data?: Primitives<Course> }) => {
   const router = useRouter();
   const supabase = createClient();
   const queryClient = useQueryClient();
-  const { mutateAsync, mutate } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: async (values: FormSchema) => {
       let thumbnailUrl = data?.thumbnail;
       if (thumbnail && thumbnail.name !== "initial-file") {
@@ -113,7 +113,7 @@ export const CreateCourseForm = ({ data }: { data?: Primitives<Course> }) => {
     onSuccess: () => {
       toast.success("Curso guardado exitosamente");
       queryClient.invalidateQueries({ queryKey: ["courses"] }); // Adjust query key as needed
-      queryClient.invalidateQueries({ queryKey: ["course", data?.id] }); // Adjust query key as needed
+      queryClient.invalidateQueries({ queryKey: ["course"] }); // Adjust query key as needed
       router.push("/admin/courses");
     },
   });

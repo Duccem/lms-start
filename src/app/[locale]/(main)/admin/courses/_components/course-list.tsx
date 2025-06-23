@@ -10,17 +10,7 @@ import {
 } from "@/lib/ui/components/dropdown-menu";
 import { fetchCourses } from "@/modules/course/infrastructure/api/http-course-service";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Archive,
-  Eye,
-  List,
-  Loader2,
-  MoreVertical,
-  Pencil,
-  School,
-  Timer,
-  Trash2,
-} from "lucide-react";
+import { Archive, Eye, Loader2, MoreVertical, Pencil, School, Timer, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 const CourseList = () => {
@@ -118,10 +108,6 @@ const CourseList = () => {
               <div className="flex items-center gap-x-1 text-sm text-muted-foreground">
                 <School className="size-6 p-1 rounded-md text-primary bg-primary/10" />
                 {course.level}
-              </div>
-              <div className="flex items-center gap-x-1 text-sm text-muted-foreground">
-                <List className="size-6 p-1 rounded-md text-primary bg-primary/10" />
-                {course.category}
               </div>
             </div>
             <Link
