@@ -108,6 +108,14 @@ export class Lesson {
       quiz.passingScore,
       quiz.maxAttempts,
       quiz.weight,
+      quiz.questions.map((q) => ({
+        id: q.id,
+        title: q.question,
+        options: q.options.map((option) => ({
+          option: option.option,
+          isCorrect: option.isCorrect,
+        })),
+      })),
     );
   }
 

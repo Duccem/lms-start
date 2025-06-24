@@ -1,43 +1,21 @@
 import {
-  and,
-  AnyTable,
-  asc,
-  desc,
-  eq,
-  gt,
-  gte,
-  inArray,
-  like,
-  ne,
-  notInArray,
-  notLike,
-  or,
-} from "drizzle-orm";
-import {
   Criteria,
-  Direction,
   Filter,
   Filters,
   FilterType,
+  Include,
+  isFilter,
   Operator,
   Order,
   Pagination,
-} from "../ddd/core/criteria";
-
+} from "@/lib/ddd/core/criteria";
 interface TransformerFunction<T, K> {
   (value: T): K;
 }
-export class DrizzleCriteriaConverter {
-  private filterTransformers: Map<Operator, TransformerFunction<Filter, any>> =
-    new Map([]);
-  private table: AnyTable<any>;
-
-  constructor(table: AnyTable<any>) {
-    this.table = table;
-    this.filterTransformers = new Map<
-      Operator,
-      TransformerFunction<Filter, any>
-    >([
+export class PrismaCriteriaConverter {
+  private filterTransformers: Map<Operator, TransformerFunction<Filter, any>> = new Map([]);
+  constructor() {
+    this.filterTransformers = new Map<Operator, TransformerFunction<Filter, any>>([
       [Operator.EQUAL, this.equal],
       [Operator.NOT_EQUAL, this.notEqual],
       [Operator.GT, this.greaterThan],
@@ -53,96 +31,131 @@ export class DrizzleCriteriaConverter {
 
   public criteria(criteria: Criteria) {
     const where = this.filter(criteria.getFilters());
-    const orderBy = criteria.hasOrder()
-      ? this.order(criteria.getOrder()!)
-      : undefined;
+    const orderBy = criteria.hasOrder() ? this.order(criteria.getOrder()!) : undefined;
     const pagination = criteria.hasPagination()
       ? this.pagination(criteria.getPagination()!)
       : undefined;
+    const include = this.include(criteria.getIncludes());
     return {
       where,
       orderBy,
       ...pagination,
+      include,
     };
   }
 
   private filter(filters: Filters): any {
     const filter = filters.filters.map((filter: any) => {
+      if (!isFilter(filter)) return this.filter(filter);
       const transformer = this.filterTransformers.get(filter.operator);
       if (transformer) {
         return transformer(filter);
       }
       throw Error(`Unexpected operator value ${filter.operator}`);
     });
-    if (filters.type === FilterType.AND) return and(...filter);
-    if (filters.type === FilterType.OR) return or(...filter);
+    if (filters.type === FilterType.AND) return { AND: [...filter] };
+    if (filters.type === FilterType.OR) return { OR: [...filter] };
+    if (filters.type === FilterType.NOT) return { NOT: [...filter] };
   }
 
   private order(order: Order) {
-    if (order.order === Direction.DESC) {
-      //@ts-ignore
-      return desc(this.table[order.field]);
-    } else {
-      //@ts-ignore
-      return asc(this.table[order.field]);
-    }
+    return {
+      [order.field]: order.order.toLowerCase(),
+    };
   }
 
   private pagination(pagination: Pagination) {
     return {
-      offset: pagination.offset || 0,
-      limit: pagination.limit || 10,
+      skip: pagination.offset || 0,
+      take: pagination.limit || 10,
     };
+  }
+  private include(include: Include[]): { [key: string]: any } {
+    return include.reduce((acc, include) => {
+      return {
+        ...acc,
+        [include.field]: include.criteria ? this.criteria(include.criteria) : true,
+      };
+    }, {});
   }
 
   private equal(filter: Filter) {
-    //@ts-ignore
-    return eq(this.table[filter.field], filter.value);
+    return {
+      [filter.field]: filter.value,
+    };
   }
 
   private notEqual(filter: Filter) {
-    //@ts-ignore
-    return ne(this.table[filter.field], filter.value);
+    return {
+      [filter.field]: {
+        not: filter.value,
+      },
+    };
   }
 
   private greaterThan(filter: Filter) {
-    //@ts-ignore
-    return gt(this.table[filter.field], filter.value);
+    return {
+      [filter.field]: {
+        gt: filter.value,
+      },
+    };
   }
 
   private greaterThanOrEqual(filter: Filter) {
-    //@ts-ignore
-    return gte(this.table[filter.field], filter.value);
+    return {
+      [filter.field]: {
+        gte: filter.value,
+      },
+    };
   }
 
   private lessThan(filter: Filter) {
-    //@ts-ignore
-    return lt(this.table[filter.field], filter.value);
+    return {
+      [filter.field]: {
+        lt: filter.value,
+      },
+    };
   }
 
   private lessThanOrEqual(filter: Filter) {
-    //@ts-ignore
-    return lte(this.table[filter.field], filter.value);
+    return {
+      [filter.field]: {
+        lte: filter.value,
+      },
+    };
   }
 
   private like(filter: Filter) {
-    // @ts-ignore
-    return like(this.table[filter.field], filter.value);
+    return {
+      [filter.field]: {
+        contains: filter.value,
+      },
+    };
   }
 
   private notLike(filter: Filter) {
-    // @ts-ignore
-    return notLike(this.table[filter.field], filter.value);
+    return {
+      [filter.field]: {
+        not: {
+          contains: filter.value,
+        },
+      },
+    };
   }
 
   private in(filter: Filter) {
-    // @ts-ignore
-    return inArray(this.table[filter.field], filter.value);
+    return {
+      [filter.field]: {
+        in: filter.value,
+      },
+    };
   }
 
   private notIn(filter: Filter) {
-    // @ts-ignore
-    return notInArray(this.table[filter.field], filter.value);
+    return {
+      [filter.field]: {
+        notIn: filter.value,
+      },
+    };
   }
 }
-

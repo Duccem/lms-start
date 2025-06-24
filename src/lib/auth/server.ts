@@ -1,15 +1,15 @@
 import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { database } from "../database";
-import { env } from "../env";
+import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { bearer, emailOTP } from "better-auth/plugins";
 import { headers } from "next/headers";
 import { cache } from "react";
+import { database } from "../database";
+import { env } from "../env";
 import { novu } from "../notifications";
 
 export const auth = betterAuth({
-  database: drizzleAdapter(database, { provider: "pg" }),
+  database: prismaAdapter(database, { provider: "postgresql" }),
   emailAndPassword: {
     enabled: true,
   },
@@ -64,4 +64,3 @@ export const getSession = cache(async () => {
     headers: await headers(),
   });
 });
-

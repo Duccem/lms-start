@@ -3,7 +3,7 @@ import { Primitives } from "@/lib/ddd/types/primitives";
 import { SaveCourse } from "@/modules/course/application/save-course";
 import { SearchCourses } from "@/modules/course/application/search-courses";
 import { Course } from "@/modules/course/domain/course";
-import { DrizzleCourseRepository } from "@/modules/course/infrastructure/persistence/drizzle-course-repository";
+import { PrismaCourseRepository } from "@/modules/course/infrastructure/persistence/prisma-course-repository";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -29,7 +29,7 @@ const createCourseSchema = z.object({
 
 export const POST = routeHandler(async ({ req, user, params, searchParams }) => {
   const parsedInpit = createCourseSchema.parse(await req.json());
-  const service = new SaveCourse(new DrizzleCourseRepository());
+  const service = new SaveCourse(new PrismaCourseRepository());
 
   await service.execute({
     ...parsedInpit,
@@ -47,7 +47,7 @@ export const POST = routeHandler(async ({ req, user, params, searchParams }) => 
 });
 
 export const GET = routeHandler(async ({}) => {
-  const service = new SearchCourses(new DrizzleCourseRepository());
+  const service = new SearchCourses(new PrismaCourseRepository());
   const courses = await service.execute();
 
   return NextResponse.json(

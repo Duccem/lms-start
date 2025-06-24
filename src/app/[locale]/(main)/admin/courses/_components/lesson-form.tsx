@@ -69,17 +69,6 @@ const formSchema = z.object({
               isCorrect: z.boolean().optional().default(false),
             }),
           ),
-          answer: z.coerce.number(),
-          timeLimit: z.coerce
-            .number()
-            .min(0, "Time limit must be a non-negative number")
-            .optional(),
-          passingScore: z.coerce
-            .number()
-            .min(0, "Passing score must be a non-negative number")
-            .optional(),
-          maxAttempts: z.coerce.number().int().min(1, "Max attempts must be at least 1").optional(),
-          weight: z.coerce.number().min(0, "Weight must be a non-negative number").optional(),
         }),
       ),
     })
@@ -122,6 +111,7 @@ export const LessonForm = ({
   const { mutateAsync } = useMutation({
     mutationFn: async (values: FormSchema) => {
       let thumbnailUrl = data?.thumbnail;
+      let videoUrl = data?.video;
       if (thumbnail && thumbnail.name !== "initial-file") {
         thumbnailUrl = await upload(supabase, {
           bucket: "lesson-thumbnails",
@@ -129,10 +119,23 @@ export const LessonForm = ({
           file: thumbnail,
         });
       }
+
+      if (values.type === "video" && video && video.name !== "initial-file") {
+        const videoUrl = await upload(supabase, {
+          bucket: "lesson-videos",
+          path: [video.name],
+          file: video,
+        });
+      }
       await saveLesson(courseId, chapterId, {
         ...values,
         thumbnail: thumbnailUrl,
-        id: data?.id ?? Uuid.random().value, // Include id if editing an existing lesson
+        id: data?.id ?? Uuid.random().value,
+        chapterId: chapterId,
+        video:
+          values.type === "video" ? { duration: values.video?.duration, video: videoUrl } : null,
+        quiz: values.type === "quiz" ? values.quiz : null,
+        article: values.type === "article" ? { content: values.article?.content } : null,
       } as any);
     },
     onSuccess: () => {
@@ -382,7 +385,6 @@ export const LessonForm = ({
                       append({
                         question: "",
                         options: [],
-                        answer: 0,
                       })
                     }
                   >
@@ -407,23 +409,6 @@ export const LessonForm = ({
                           </div>
                           <FormControl>
                             <Input placeholder="¿Cuál es la capital de Francia?" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`quiz.questions.${index}.answer`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Respuesta correcta</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Numero de la respuesta correcta (0, 1, 2, ...)"
-                              type="number"
-                              {...field}
-                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

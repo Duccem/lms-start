@@ -2,7 +2,7 @@ import { routeHandler } from "@/lib/api/route-handler";
 import { Primitives } from "@/lib/ddd/types/primitives";
 import { SaveChapter } from "@/modules/course/application/save-chapter";
 import { Chapter } from "@/modules/course/domain/chapter";
-import { DrizzleCourseRepository } from "@/modules/course/infrastructure/persistence/drizzle-course-repository";
+import { PrismaCourseRepository } from "@/modules/course/infrastructure/persistence/prisma-course-repository";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -16,7 +16,7 @@ const saveChapterSchema = z.object({
 export const POST = routeHandler(async ({ req, params }) => {
   const parsedInput = saveChapterSchema.parse(await req.json());
   const { id } = params;
-  const service = new SaveChapter(new DrizzleCourseRepository());
+  const service = new SaveChapter(new PrismaCourseRepository());
 
   await service.execute({
     id: parsedInput.id,

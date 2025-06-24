@@ -1,0 +1,136 @@
+enum CourseLevel {
+  beginner
+  intermediate
+  advanced
+
+  @@map("course_level")
+}
+
+enum CourseStatus {
+  draft
+  published
+  archived
+
+  @@map("course_status")
+}
+
+model Course {
+  id          String       @id @default(uuid())
+  title       String
+  summary     String
+  description String?
+  slug        String       @unique(map: "courses_slug_unique")
+  thumbnail   String?
+  duration    Int          @default(0)
+  level       CourseLevel  @default(beginner)
+  status      CourseStatus @default(draft)
+  category    String
+  authorId    String       @map("author_id")
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt   DateTime     @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  chapters Chapter[]
+
+  @@map("courses")
+}
+
+model Chapter {
+  id          String   @id @default(uuid())
+  courseId    String   @map("course_id")
+  title       String
+  description String?
+  position    Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  lessons Lesson[]
+
+  @@map("chapters")
+}
+
+enum LessonType {
+  video
+  article
+  quiz
+
+  @@map("lesson_type")
+}
+
+model Lesson {
+  id        String     @id @default(uuid())
+  chapterId String     @map("chapter_id")
+  title     String
+  thumbnail String?
+  position  Int        @default(0)
+  type      LessonType @default(video)
+  content   String
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime   @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  article     LessonArticle?
+  LessonVideo LessonVideo?
+  LessonQuiz  LessonQuiz[]
+
+  @@map("lessons")
+}
+
+model LessonArticle {
+  id        String   @id @default(uuid())
+  lessonId  String   @unique @map("lesson_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("lesson_articles")
+}
+
+model LessonVideo {
+  id        String   @id @default(uuid())
+  lessonId  String   @unique @map("lesson_id")
+  video     String   @map("video_url")
+  duration  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("lesson_videos")
+}
+
+model LessonQuiz {
+  id           String   @id @default(uuid())
+  lessonId     String   @map("lesson_id")
+  timeLimit    Int      @default(0) @map("time_limit")
+  passingScore Int      @default(0) @map("passing_score")
+  maxAttempts  Int      @default(1) @map("max_attempts")
+  weight       Int      @default(1)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  questions Question[]
+
+  @@map("lesson_quizzes")
+}
+
+model Question {
+  id           String   @id @default(uuid())
+  lessonQuizId String   @map("lesson_quiz_id")
+  question     String   @map("question_text")
+  options      Json[]   @map("options_json")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  lessonQuiz LessonQuiz @relation(fields: [lessonQuizId], references: [id], onDelete: Cascade)
+
+  @@map("questions")
+}
