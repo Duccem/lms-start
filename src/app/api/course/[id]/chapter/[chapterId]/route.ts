@@ -1,3 +1,4 @@
+import { HttpNextResponse } from "@/lib/api/http-next-response";
 import { routeHandler } from "@/lib/api/route-handler";
 import { DeleteChapter, DeleteChapterErrors } from "@/modules/course/application/delete-chapter";
 import { ChapterNotDeleteableError } from "@/modules/course/domain/errors/chapter-not-deleteable";
@@ -20,10 +21,10 @@ export const DELETE = routeHandler(
     switch (true) {
       case error instanceof CourseNotFoundError:
       case error instanceof ChapterNotDeleteableError:
-        return NextResponse.json({ message: error.message }, { status: 400 });
+        return HttpNextResponse.domainError(error, 400);
       default:
         console.error("Unexpected error:", error);
-        return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+        return HttpNextResponse.internalServerError();
     }
   },
 );
