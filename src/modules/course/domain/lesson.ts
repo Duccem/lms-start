@@ -88,12 +88,45 @@ export class Lesson {
     return [];
   }
 
+  public update(
+    title: string,
+    content: string,
+    type: string,
+    thumbnail: string,
+    position: number,
+    typeData: Record<string, any> = {},
+  ): void {
+    this.title = new LessonTitle(title);
+    this.content = new LessonContent(content);
+    this.type = LessonType.fromString(type);
+    this.thumbnail = new File(thumbnail);
+    this.position = new LessonPosition(position);
+    this.updatedAt = DateValueObject.today();
+
+    if (this.type.value === LessonTypeValue.Video) {
+      this.setVideo(typeData as Primitives<LessonVideo>);
+    } else if (this.type.value === LessonTypeValue.Quiz) {
+      this.setQuiz(typeData as Primitives<LessonQuiz>);
+    } else if (this.type.value === LessonTypeValue.Article) {
+      this.article?.update((typeData as Primitives<LessonArticle>).content);
+    } else {
+      this.video = null;
+      this.quiz = null;
+      this.article = null;
+    }
+  }
+
   public setVideo(video: Primitives<LessonVideo>): void {
     if (this.type.value !== LessonTypeValue.Video) {
       throw new Error("Cannot set video for non-video lesson type");
     }
 
-    this.video = LessonVideo.create(video.id, this.id.value, video.video, video.duration);
+    this.video = LessonVideo.create(
+      Uuid.random().value,
+      this.id.value,
+      video.video,
+      video.duration,
+    );
   }
 
   public setQuiz(quiz: Primitives<LessonQuiz>): void {
@@ -102,14 +135,14 @@ export class Lesson {
     }
 
     this.quiz = LessonQuiz.create(
-      quiz.id,
+      Uuid.random().value,
       this.id.value,
       quiz.timeLimit,
       quiz.passingScore,
       quiz.maxAttempts,
       quiz.weight,
       quiz.questions.map((q) => ({
-        id: q.id,
+        id: Uuid.random().value,
         title: q.question,
         options: q.options.map((option) => ({
           option: option.option,
@@ -124,6 +157,6 @@ export class Lesson {
       throw new Error("Cannot set article for non-article lesson type");
     }
 
-    this.article = LessonArticle.create(article.id, this.id.value, article.content);
+    this.article = LessonArticle.create(Uuid.random().value, this.id.value, article.content);
   }
 }

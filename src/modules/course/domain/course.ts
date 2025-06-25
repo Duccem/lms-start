@@ -151,7 +151,11 @@ export class Course extends Aggregate {
     if (!chapter) {
       throw new Error(`Chapter with ID ${data.chapterId} not found in course ${this.id.value}`);
     }
-    chapter.saveLesson(data);
+    if (!chapter.hasLesson(data.id)) {
+      chapter.addLesson(data);
+    } else {
+      chapter.updateLesson(data);
+    }
     this.updatedAt = DateValueObject.today();
   }
 

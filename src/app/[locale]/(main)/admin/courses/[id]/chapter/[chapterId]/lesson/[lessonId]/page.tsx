@@ -1,14 +1,14 @@
 import { buttonVariants } from "@/lib/ui/components/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { LessonSection } from "../../../../_components/lesson-section";
+import { LessonSection } from "../../../../../_components/lesson-section";
 
 export default async function Page({
   params,
 }: {
-  params: Promise<{ id: string; chapterId: string }>;
+  params: Promise<{ id: string; chapterId: string; lessonId: string }>;
 }) {
-  const { id, chapterId } = await params;
+  const { id, chapterId, lessonId } = await params;
 
   return (
     <div className="flex flex-col gap-4 px-6 py-4">
@@ -21,7 +21,7 @@ export default async function Page({
         </Link>
         <h1 className="text-2xl font-medium">Edita la lección</h1>
       </div>
-      <LessonSection courseId={id} chapterId={chapterId} />
+      <LessonSection courseId={id} chapterId={chapterId} lessonId={lessonId} />
     </div>
   );
 }

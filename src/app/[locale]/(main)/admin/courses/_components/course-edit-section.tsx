@@ -28,11 +28,14 @@ const CourseEditSection = ({ id }: { id: string }) => {
   });
   if (isPending) {
     return (
-      <div className="h-full w-full flex flex-col justify-center items-center gap-y-10">
-        <Skeleton className="w-1/2 h-[40px]" />
-        <Skeleton className="w-1/2 h-[40px]" />
-        <Skeleton className="w-1/2 h-[40px]" />
-        <Skeleton className="w-1/2 h-[40px]" />
+      <div className="h-full w-full p-6 flex flex-col gap-3">
+        <div className="mb-8 h-16 w-1/3 flex">
+          <Skeleton className="w-full h-full" />
+        </div>
+        <div className="h-full w-full grid grid-cols-1 md:grid-cols-2 gap-3 gap-y-10">
+          <Skeleton className="" />
+          <Skeleton className="" />
+        </div>
       </div>
     );
   }

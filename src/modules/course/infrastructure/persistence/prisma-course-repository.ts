@@ -34,6 +34,23 @@ export class PrismaCourseRepository implements CourseRepository {
       where: {
         id: id.value,
       },
+      include: {
+        chapters: {
+          include: {
+            lessons: {
+              include: {
+                article: true,
+                video: true,
+                quiz: {
+                  include: {
+                    questions: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
     if (!response) {
       return null;

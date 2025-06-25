@@ -73,53 +73,72 @@ export class Chapter {
   hasLesson(lessonId: string): boolean {
     return this.lessons.some((lesson) => lesson.id.value === lessonId);
   }
-  saveLesson(lesson: Primitives<Lesson>): void {
-    if (!this.hasLesson(lesson.id)) {
-      const newLesson = Lesson.create(
-        lesson.id,
-        this.id.value,
-        lesson.title,
-        lesson.content,
-        lesson.type,
-        lesson.thumbnail,
-        lesson.position,
-      );
-      switch (lesson.type) {
-        case LessonTypeValue.Video:
-          newLesson.setVideo(lesson.video!);
-          break;
-        case LessonTypeValue.Quiz:
-          newLesson.setQuiz(lesson.quiz!);
-          break;
-        case LessonTypeValue.Article:
-          newLesson.setArticle(lesson.article!);
-          break;
-        default:
-          break;
-      }
-      this.lessons.push(newLesson);
-    } else {
-      const index = this.lessons.findIndex((l) => l.id.value === lesson.id);
-      const newLesson = Lesson.fromPrimitives({
-        ...this.lessons[index].toPrimitives(),
-        ...lesson,
-        id: this.lessons[index].id.value,
-        chapterId: this.id.value,
-      });
-      switch (lesson.type) {
-        case LessonTypeValue.Video:
-          newLesson.setVideo(lesson.video!);
-          break;
-        case LessonTypeValue.Quiz:
-          newLesson.setQuiz(lesson.quiz!);
-          break;
-        case LessonTypeValue.Article:
-          newLesson.setArticle(lesson.article!);
-          break;
-        default:
-          break;
-      }
-      this.lessons[index] = newLesson;
+  addLesson(lesson: Primitives<Lesson>): void {
+    const newLesson = Lesson.create(
+      lesson.id,
+      this.id.value,
+      lesson.title,
+      lesson.content,
+      lesson.type,
+      lesson.thumbnail,
+      lesson.position,
+    );
+    switch (lesson.type) {
+      case LessonTypeValue.Video:
+        newLesson.setVideo(lesson.video!);
+        break;
+      case LessonTypeValue.Quiz:
+        newLesson.setQuiz(lesson.quiz!);
+        break;
+      case LessonTypeValue.Article:
+        newLesson.setArticle(lesson.article!);
+        break;
+      default:
+        break;
+    }
+    this.lessons.push(newLesson);
+    this.updatedAt = DateValueObject.today();
+  }
+  updateLesson(lesson: Primitives<Lesson>): void {
+    const index = this.lessons.findIndex((l) => l.id.value === lesson.id);
+
+    if (index === -1) {
+      throw new Error(`Lesson with id ${lesson.id} not found in chapter ${this.id.value}`);
+    }
+
+    switch (lesson.type) {
+      case LessonTypeValue.Video:
+        this.lessons[index].update(
+          lesson.title,
+          lesson.content,
+          lesson.type,
+          lesson.thumbnail,
+          lesson.position,
+          lesson.video ? lesson.video : {},
+        );
+        break;
+      case LessonTypeValue.Quiz:
+        this.lessons[index].update(
+          lesson.title,
+          lesson.content,
+          lesson.type,
+          lesson.thumbnail,
+          lesson.position,
+          lesson.quiz ? lesson.quiz : {},
+        );
+        break;
+      case LessonTypeValue.Article:
+        this.lessons[index].update(
+          lesson.title,
+          lesson.content,
+          lesson.type,
+          lesson.thumbnail,
+          lesson.position,
+          lesson.article ? lesson.article : {},
+        );
+        break;
+      default:
+        break;
     }
     this.updatedAt = DateValueObject.today();
   }

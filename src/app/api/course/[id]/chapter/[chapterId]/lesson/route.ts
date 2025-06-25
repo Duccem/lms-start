@@ -33,10 +33,12 @@ const saveLessonSchema = z.object({
       ),
     })
     .optional(),
-  video: z.object({
-    video: z.string().url("Video URL must be a valid URL"),
-    duration: z.coerce.number().min(0, "Duration must be a non-negative number").optional(),
-  }),
+  video: z
+    .object({
+      video: z.string().url("Video URL must be a valid URL"),
+      duration: z.coerce.number().min(0, "Duration must be a non-negative number").optional(),
+    })
+    .optional(),
   article: z
     .object({
       content: z.string().min(1, "Article content is required"),

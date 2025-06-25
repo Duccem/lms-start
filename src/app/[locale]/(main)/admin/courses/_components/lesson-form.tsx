@@ -99,6 +99,24 @@ export const LessonForm = ({
       title: data?.title || "",
       content: data?.content || "",
       position: data?.position ?? lessonsLength + 1,
+      type: data?.type || "video",
+      article: data?.article ? { content: data.article.content } : undefined,
+      video: data?.video ? { duration: data.video.duration } : undefined, // Default duration to 0 if not provided
+      quiz: data?.quiz
+        ? {
+            timeLimit: data.quiz.timeLimit ?? 0,
+            passingScore: data.quiz.passingScore ?? 0,
+            maxAttempts: data.quiz.maxAttempts ?? 1,
+            weight: data.quiz.weight ?? 0,
+            questions: data.quiz.questions.map((question) => ({
+              question: question.question,
+              options: question.options.map((option) => ({
+                option: option.option,
+                isCorrect: option.isCorrect || false, // Default to false if not provided
+              })),
+            })),
+          }
+        : undefined, // Default to undefined if no quiz data
     },
   });
   const { fields, append, remove } = useFieldArray({
@@ -111,7 +129,7 @@ export const LessonForm = ({
   const { mutateAsync } = useMutation({
     mutationFn: async (values: FormSchema) => {
       let thumbnailUrl = data?.thumbnail;
-      let videoUrl = data?.video;
+      let videoUrl = data?.video?.video;
       if (thumbnail && thumbnail.name !== "initial-file") {
         thumbnailUrl = await upload(supabase, {
           bucket: "lesson-thumbnails",
@@ -121,7 +139,7 @@ export const LessonForm = ({
       }
 
       if (values.type === "video" && video && video.name !== "initial-file") {
-        const videoUrl = await upload(supabase, {
+        videoUrl = await upload(supabase, {
           bucket: "lesson-videos",
           path: [video.name],
           file: video,
@@ -133,9 +151,11 @@ export const LessonForm = ({
         id: data?.id ?? Uuid.random().value,
         chapterId: chapterId,
         video:
-          values.type === "video" ? { duration: values.video?.duration, video: videoUrl } : null,
-        quiz: values.type === "quiz" ? values.quiz : null,
-        article: values.type === "article" ? { content: values.article?.content } : null,
+          values.type === "video"
+            ? { duration: values.video?.duration, video: videoUrl }
+            : undefined,
+        quiz: values.type === "quiz" ? values.quiz : undefined,
+        article: values.type === "article" ? { content: values.article?.content } : undefined,
       } as any);
     },
     onSuccess: () => {
@@ -203,7 +223,7 @@ export const LessonForm = ({
                 <FormItem>
                   <FormLabel>Titulo</FormLabel>
                   <FormControl>
-                    <Input placeholder="Capitulo 1" {...field} />
+                    <Input placeholder="Lección 1" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -217,7 +237,7 @@ export const LessonForm = ({
                 <FormItem>
                   <FormLabel>Descripcion</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="En este capitulo..." {...field} />
+                    <Textarea placeholder="En esta lección..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -235,7 +255,7 @@ export const LessonForm = ({
                 <FormItem>
                   <FormLabel>Posición</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="En este capitulo..." {...field} />
+                    <Input type="number" placeholder="1" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -297,7 +317,7 @@ export const LessonForm = ({
             {form.watch("type") === "article" && (
               <FormField
                 control={form.control}
-                name="content"
+                name="article.content"
                 render={({ field }) => (
                   <FormItem className="mt-5">
                     <FormLabel>Contenido</FormLabel>

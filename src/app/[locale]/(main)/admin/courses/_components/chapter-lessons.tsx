@@ -105,9 +105,12 @@ const ChapterLessons = ({
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant={"ghost"} onClick={() => setIsOpen(item.id)}>
+                      <Link
+                        href={`/admin/courses/${courseId}/chapter/${chapterId}/lesson/${item.id}`}
+                        className={buttonVariants({ variant: "ghost", size: "icon" })}
+                      >
                         <Pencil />
-                      </Button>
+                      </Link>
                       <Button variant={"ghost"}>
                         <Trash2 />
                       </Button>

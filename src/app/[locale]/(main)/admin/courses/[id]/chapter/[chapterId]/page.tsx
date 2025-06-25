@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ChapterSection } from "../../../_components/chapter-section";
 
 export default async function Page({ params }: { params: { id: string; chapterId: string } }) {
-  const { id, chapterId } = params;
+  const { id, chapterId } = await params;
 
   return (
     <div className="flex flex-col gap-4 px-6 py-4">

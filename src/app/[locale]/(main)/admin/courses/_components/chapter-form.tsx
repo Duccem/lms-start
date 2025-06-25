@@ -44,7 +44,7 @@ export const ChapterForm = ({
     defaultValues: {
       title: data?.title || "",
       description: data?.description || "",
-      position: data?.position || chaptersLength,
+      position: data?.position || chaptersLength + 1,
     },
   });
   const { isSubmitting } = form.formState;

@@ -56,7 +56,7 @@ const SignUpForm = () => {
   const socialSignUp = async (provider: "google" | "microsoft") => {
     await authClient.signIn.social({
       provider,
-      callbackURL: "/home",
+      callbackURL: "/admin/dashboard",
     });
   };
 
@@ -88,9 +88,7 @@ const SignUpForm = () => {
       console.log("Verificación exitosa");
     } catch (error) {
       console.error("Error al verificar el correo:", error);
-      toast.error(
-        "Error al verificar el correo. Por favor, inténtalo de nuevo."
-      );
+      toast.error("Error al verificar el correo. Por favor, inténtalo de nuevo.");
       // Handle error (e.g., show error message)
     } finally {
       setVerifyingEmail(false);
@@ -101,17 +99,11 @@ const SignUpForm = () => {
     return (
       <div className="flex flex-col items-center  justify-center h-full space-y-4">
         <p className="text-sm text-muted-foreground">
-          Hemos enviado un correo con tu código de verificación a tu correo
-          electrónico. Por favor, verifica tu bandeja de entrada y sigue las
-          instrucciones para completar el registro.
+          Hemos enviado un correo con tu código de verificación a tu correo electrónico. Por favor,
+          verifica tu bandeja de entrada y sigue las instrucciones para completar el registro.
         </p>
 
-        <InputOTP
-          maxLength={6}
-          className="w-full"
-          value={otpCode}
-          onChange={setOtpCode}
-        >
+        <InputOTP maxLength={6} className="w-full" value={otpCode} onChange={setOtpCode}>
           <InputOTPGroup>
             <InputOTPSlot index={0} />
             <InputOTPSlot index={1} />
@@ -124,17 +116,8 @@ const SignUpForm = () => {
             <InputOTPSlot index={5} />
           </InputOTPGroup>
         </InputOTP>
-        <Button
-          size="lg"
-          className="w-full"
-          onClick={verify}
-          disabled={!otpCode || verifyingEmail}
-        >
-          {verifyingEmail ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            "Verificar Email"
-          )}
+        <Button size="lg" className="w-full" onClick={verify} disabled={!otpCode || verifyingEmail}>
+          {verifyingEmail ? <Loader2 className="size-4 animate-spin" /> : "Verificar Email"}
         </Button>
         <div>
           <p className="text-sm text-muted-foreground">
@@ -152,10 +135,7 @@ const SignUpForm = () => {
         </div>
         <div className="text-sm text-muted-foreground">
           Si ya tienes una cuenta, puedes{" "}
-          <Link
-            href="/auth/sign-in"
-            className="text-primary underline underline-offset-4"
-          >
+          <Link href="/auth/sign-in" className="text-primary underline underline-offset-4">
             iniciar sesión aquí
           </Link>
         </div>
@@ -209,17 +189,8 @@ const SignUpForm = () => {
             </FormItem>
           )}
         />
-        <Button
-          size={"lg"}
-          className="w-full"
-          disabled={isSubmitting}
-          type="submit"
-        >
-          {isSubmitting ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            "Registrarse"
-          )}
+        <Button size={"lg"} className="w-full" disabled={isSubmitting} type="submit">
+          {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : "Registrarse"}
         </Button>
       </form>
       <div className="flex flex-col gap-4 mt-6">
@@ -241,10 +212,7 @@ const SignUpForm = () => {
         <div>
           <p className="text-sm text-muted-foreground">
             ¿Ya tienes una cuenta?{" "}
-            <Link
-              href="/auth/sign-in"
-              className="text-primary underline underline-offset-4"
-            >
+            <Link href="/auth/sign-in" className="text-primary underline underline-offset-4">
               Inicia sesión
             </Link>
           </p>
@@ -266,4 +234,3 @@ const SignUpForm = () => {
 };
 
 export default SignUpForm;
-

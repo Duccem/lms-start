@@ -22,6 +22,7 @@ model Course {
   slug        String       @unique(map: "courses_slug_unique")
   thumbnail   String?
   duration    Int          @default(0)
+  price       Int          @default(0)
   level       CourseLevel  @default(beginner)
   status      CourseStatus @default(draft)
   category    String
@@ -73,9 +74,9 @@ model Lesson {
 
   chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
-  article     LessonArticle?
-  LessonVideo LessonVideo?
-  LessonQuiz  LessonQuiz[]
+  article LessonArticle?
+  video   LessonVideo?
+  quiz    LessonQuiz?
 
   @@map("lessons")
 }
@@ -107,7 +108,7 @@ model LessonVideo {
 
 model LessonQuiz {
   id           String   @id @default(uuid())
-  lessonId     String   @map("lesson_id")
+  lessonId     String   @unique @map("lesson_id")
   timeLimit    Int      @default(0) @map("time_limit")
   passingScore Int      @default(0) @map("passing_score")
   maxAttempts  Int      @default(1) @map("max_attempts")

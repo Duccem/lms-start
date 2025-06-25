@@ -55,7 +55,7 @@ export async function saveLesson(
   chapterId: string,
   lessonData: Partial<Primitives<Lesson>>,
 ): Promise<void> {
-  const response = await fetch(`/api/course/${courseId}/chapter/${chapterId}`, {
+  const response = await fetch(`/api/course/${courseId}/chapter/${chapterId}/lesson`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

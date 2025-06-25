@@ -40,4 +40,9 @@ export class LessonArticle {
       updatedAt: this.updatedAt.value,
     };
   }
+
+  update(content: string): void {
+    this.content = new StringValueObject(content);
+    this.updatedAt = DateValueObject.today();
+  }
 }
