@@ -5,6 +5,7 @@ import { Button, buttonVariants } from "@/lib/ui/components/button";
 import { Card } from "@/lib/ui/components/card";
 import { cn } from "@/lib/ui/lib/utils";
 import { Lesson } from "@/modules/course/domain/lesson";
+import { deleteLesson } from "@/modules/course/infrastructure/api/http-course-service";
 import {
   DndContext,
   DraggableSyntheticListeners,
@@ -22,9 +23,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const ChapterLessons = ({
   data,
@@ -35,7 +39,6 @@ const ChapterLessons = ({
   chapterId: string;
   courseId: string;
 }) => {
-  const [editing, setEditing] = useState<string | null>(null);
   const initialItems = data.map((lesson) => ({
     id: lesson.id,
     position: lesson.position,
@@ -66,13 +69,21 @@ const ChapterLessons = ({
     }
   }
 
-  const setIsOpen = (id: string | boolean) => {
-    if (id) {
-      setEditing(id as string);
-    } else {
-      setEditing(null);
-    }
-  };
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { mutateAsync } = useMutation({
+    mutationFn: async (data: { courseId: string; chapterId: string; lessonId: string }) => {
+      await deleteLesson(data.courseId, data.chapterId, data.lessonId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["course"] });
+      toast.success("Lección eliminada correctamente");
+      router.refresh();
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Error al eliminar la lección");
+    },
+  });
 
   return (
     <DndContext collisionDetection={rectIntersection} onDragEnd={handleDragEnd} sensors={sensors}>
@@ -111,7 +122,17 @@ const ChapterLessons = ({
                       >
                         <Pencil />
                       </Link>
-                      <Button variant={"ghost"}>
+                      <Button
+                        variant={"ghost"}
+                        size="icon"
+                        onClick={() =>
+                          mutateAsync({
+                            courseId: courseId,
+                            chapterId: chapterId,
+                            lessonId: item.id,
+                          })
+                        }
+                      >
                         <Trash2 />
                       </Button>
                     </div>

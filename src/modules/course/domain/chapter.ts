@@ -142,4 +142,8 @@ export class Chapter {
     }
     this.updatedAt = DateValueObject.today();
   }
+
+  isDeleteable(): boolean {
+    return this.lessons.length === 0;
+  }
 }

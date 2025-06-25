@@ -139,4 +139,24 @@ export class PrismaCourseRepository implements CourseRepository {
 
     await Promise.all(questions.map(upsertQuestion));
   }
+
+  async deleteLesson(courseId: Uuid, chapterId: Uuid, lessonId: Uuid): Promise<void> {
+    await database.lesson.delete({
+      where: {
+        id: lessonId.value,
+        chapterId: chapterId.value,
+        chapter: {
+          courseId: courseId.value,
+        },
+      },
+    });
+  }
+  async deleteChapter(courseId: Uuid, chapterId: Uuid): Promise<void> {
+    await database.chapter.delete({
+      where: {
+        id: chapterId.value,
+        courseId: courseId.value,
+      },
+    });
+  }
 }

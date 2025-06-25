@@ -66,3 +66,26 @@ export async function saveLesson(
     throw new Error("Failed to save lesson");
   }
 }
+
+export async function deleteLesson(
+  courseId: string,
+  chapterId: string,
+  lessonId: string,
+): Promise<void> {
+  const response = await fetch(`/api/course/${courseId}/chapter/${chapterId}/lesson/${lessonId}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to delete lesson");
+  }
+}
+
+export async function deleteChapter(courseId: string, chapterId: string): Promise<void> {
+  const response = await fetch(`/api/course/${courseId}/chapter/${chapterId}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to delete chapter");
+  }
+}

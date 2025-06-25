@@ -5,6 +5,7 @@ import { Button, buttonVariants } from "@/lib/ui/components/button";
 import { Card } from "@/lib/ui/components/card";
 import { cn } from "@/lib/ui/lib/utils";
 import { Course } from "@/modules/course/domain/course";
+import { deleteChapter } from "@/modules/course/infrastructure/api/http-course-service";
 import {
   DndContext,
   DraggableSyntheticListeners,
@@ -22,9 +23,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const CourseChapters = ({ data }: { data: Primitives<Course> }) => {
   const [editing, setEditing] = useState<string | null>(null);
@@ -58,7 +62,23 @@ const CourseChapters = ({ data }: { data: Primitives<Course> }) => {
     }
   }
 
-  const selectedChapter = data.chapters.find((chapter) => chapter.id === editing);
+  const router = useRouter();
+
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: async (data: { courseId: string; chapterId: string }) => {
+      await deleteChapter(data.courseId, data.chapterId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["course"] });
+      toast.success("Capítulo eliminado correctamente");
+      router.refresh();
+    },
+    onError: (error: any) => {
+      console.log(error);
+      toast.error(error.message || "Error al eliminar el capítulo");
+    },
+  });
 
   return (
     <DndContext collisionDetection={rectIntersection} onDragEnd={handleDragEnd} sensors={sensors}>
@@ -96,7 +116,12 @@ const CourseChapters = ({ data }: { data: Primitives<Course> }) => {
                       >
                         <Pencil />
                       </Link>
-                      <Button variant={"ghost"}>
+                      <Button
+                        variant={"ghost"}
+                        onClick={() => {
+                          mutate({ courseId: data.id, chapterId: item.id });
+                        }}
+                      >
                         <Trash2 />
                       </Button>
                     </div>

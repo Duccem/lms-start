@@ -180,4 +180,15 @@ export class Course extends Aggregate {
     });
     this.updatedAt = DateValueObject.today();
   }
+
+  chapterIsDeletable(chapterId: string): boolean {
+    const chapter = this.chapters.find((c) => c.id.value === chapterId);
+    if (!chapter) {
+      return false; // Chapter not found, cannot delete
+    }
+    if (chapter.isDeleteable()) {
+      return true; // Chapter is deletable if it has no lessons
+    }
+    return false;
+  }
 }
