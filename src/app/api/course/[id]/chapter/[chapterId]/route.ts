@@ -20,6 +20,7 @@ export const DELETE = routeHandler(
   (error: DeleteChapterErrors) => {
     switch (true) {
       case error instanceof CourseNotFoundError:
+        return HttpNextResponse.domainError(error, 404);
       case error instanceof ChapterNotDeleteableError:
         return HttpNextResponse.domainError(error, 400);
       default:

@@ -9,7 +9,7 @@ export const routeHandler = <T extends DomainError, P = unknown>(
     params: { [key: string]: any };
     searchParams: { [key: string]: any };
   }) => Promise<NextResponse>,
-  onError: (error: T) => NextResponse | void = () => undefined
+  onError: (error: T) => NextResponse | void = () => undefined,
 ) => {
   return async (req: NextRequest, { params }: { params: Promise<any> }) => {
     const session = await getSession();
@@ -30,11 +30,7 @@ export const routeHandler = <T extends DomainError, P = unknown>(
           return response;
         }
       }
-      return NextResponse.json(
-        { message: "Internal Server Error" },
-        { status: 500 }
-      );
+      return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }
   };
 };
-
