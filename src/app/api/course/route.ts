@@ -31,6 +31,12 @@ export const POST = routeHandler(
   {
     schema: createCourseSchema,
     name: "create-course",
+    cache: {
+      tags: (params) => {
+        return ["courses", `user:${params.user.id}`];
+      },
+      revalidate: true,
+    },
   },
   async ({ user, body }) => {
     const service = new SaveCourse(new PrismaCourseRepository());

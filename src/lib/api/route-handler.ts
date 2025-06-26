@@ -28,9 +28,9 @@ type RouteHandlerOptions<Q, P, R> = {
 };
 
 type RouteHandlerCacheOptions<Q, P> = {
-  tags: string[] | ((params: RouteHandlerParams<Q, P>) => string[]);
+  tags?: string[] | ((params: RouteHandlerParams<Q, P>) => string[]);
   ttl?: number;
-  revalidate?: string[];
+  revalidate?: boolean;
 };
 
 // The route handler function that processes the request, validates the user session, and handles caching.
@@ -171,20 +171,30 @@ async function handleCache<R, P, Q>(
   params: RouteHandlerParams<Q, P>,
   cacheOptions?: RouteHandlerCacheOptions<Q, P>,
 ): Promise<R> {
-  let response: R;
-  if (cacheOptions?.tags && cacheOptions.ttl) {
-    const tags =
-      typeof cacheOptions.tags === "function" ? cacheOptions.tags(params) : cacheOptions.tags;
-    response = await cache(() => handler(params), tags, {
-      revalidate: cacheOptions.ttl,
-      tags: [tags.join("-")],
-    })();
-  } else {
-    response = await handler(params);
+  if (!cacheOptions) {
+    return handler(params);
   }
 
-  if (cacheOptions?.revalidate && response === undefined) {
-    const tag = cacheOptions.revalidate.join("-");
+  const { tags, ttl, revalidate } = cacheOptions;
+
+  const resolveTags = (): string[] => {
+    if (!tags) return [];
+    return typeof tags === "function" ? tags(params) : tags;
+  };
+
+  if (tags && ttl && !revalidate) {
+    const tagList = resolveTags();
+    return cache(() => handler(params), tagList, {
+      revalidate: ttl,
+      tags: [tagList.join("-")],
+    })();
+  }
+
+  const response = await handler(params);
+
+  if (revalidate && response === undefined) {
+    const tagList = resolveTags();
+    const tag = tagList.length > 0 ? tagList.join("-") : "no-cache-tag";
     revalidateTag(tag);
   }
 
