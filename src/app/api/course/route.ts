@@ -43,7 +43,15 @@ export const POST = routeHandler(
 );
 
 export const GET = routeHandler(
-  { name: "search-courses", cache: { tags: ["courses"], ttl: 60 } },
+  {
+    name: "search-courses",
+    cache: {
+      tags: (params) => {
+        return ["courses", `user:${params.user.id}`];
+      },
+      ttl: 60,
+    },
+  },
   async ({}) => {
     const service = new SearchCourses(new PrismaCourseRepository());
     const courses = await service.execute();

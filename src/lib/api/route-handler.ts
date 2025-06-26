@@ -177,16 +177,15 @@ async function handleCache<R, P, Q>(
       typeof cacheOptions.tags === "function" ? cacheOptions.tags(params) : cacheOptions.tags;
     response = await cache(() => handler(params), tags, {
       revalidate: cacheOptions.ttl,
-      tags,
+      tags: [tags.join("-")],
     })();
   } else {
     response = await handler(params);
   }
 
   if (cacheOptions?.revalidate && response === undefined) {
-    for (const tag of cacheOptions.revalidate) {
-      revalidateTag(tag);
-    }
+    const tag = cacheOptions.revalidate.join("-");
+    revalidateTag(tag);
   }
 
   return response;
