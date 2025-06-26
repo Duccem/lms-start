@@ -24,11 +24,11 @@ type RouteHandlerOptions<Q, P, R> = {
   querySchema?: ZodSchema<Q>;
   authenticated?: boolean;
   permissions?: (user: BetterUser) => boolean;
-  cache?: RouteHandlerCacheOptions;
+  cache?: RouteHandlerCacheOptions<Q, P>;
 };
 
-type RouteHandlerCacheOptions = {
-  tags: string[];
+type RouteHandlerCacheOptions<Q, P> = {
+  tags: string[] | ((params: RouteHandlerParams<Q, P>) => string[]);
   ttl?: number;
   revalidate?: string[];
 };
@@ -169,13 +169,15 @@ function parseBody<P>(req: NextRequest, schema?: ZodSchema<P>): P | undefined {
 async function handleCache<R, P, Q>(
   handler: RouteHandler<Q, P, R>,
   params: RouteHandlerParams<Q, P>,
-  cacheOptions?: RouteHandlerCacheOptions,
+  cacheOptions?: RouteHandlerCacheOptions<Q, P>,
 ): Promise<R> {
   let response: R;
   if (cacheOptions?.tags && cacheOptions.ttl) {
-    response = await cache(() => handler(params), cacheOptions.tags, {
+    const tags =
+      typeof cacheOptions.tags === "function" ? cacheOptions.tags(params) : cacheOptions.tags;
+    response = await cache(() => handler(params), tags, {
       revalidate: cacheOptions.ttl,
-      tags: cacheOptions.tags,
+      tags,
     })();
   } else {
     response = await handler(params);
