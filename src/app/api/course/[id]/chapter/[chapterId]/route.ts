@@ -4,18 +4,15 @@ import { DeleteChapter, DeleteChapterErrors } from "@/modules/course/application
 import { ChapterNotDeleteableError } from "@/modules/course/domain/errors/chapter-not-deleteable";
 import { CourseNotFoundError } from "@/modules/course/domain/errors/course-not-found";
 import { PrismaCourseRepository } from "@/modules/course/infrastructure/persistence/prisma-course-repository";
-import { NextResponse } from "next/server";
 
 export const DELETE = routeHandler(
+  { name: "delete-chapter" },
   async ({ params }) => {
     const { id: courseId, chapterId } = params;
 
     const service = new DeleteChapter(new PrismaCourseRepository());
 
     await service.execute(courseId as string, chapterId as string);
-    return NextResponse.json({
-      message: "Chapter deleted successfully",
-    });
   },
   (error: DeleteChapterErrors) => {
     switch (true) {

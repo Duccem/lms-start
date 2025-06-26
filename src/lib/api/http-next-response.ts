@@ -22,6 +22,10 @@ export class HttpNextResponse {
     );
   }
 
+  static noResponse(): NextResponse {
+    return new NextResponse(null, { status: 204 });
+  }
+
   static created(): NextResponse {
     return new NextResponse(null, { status: 201 });
   }

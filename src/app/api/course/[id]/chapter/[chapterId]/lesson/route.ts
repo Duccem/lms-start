@@ -1,7 +1,8 @@
+import { HttpNextResponse } from "@/lib/api/http-next-response";
 import { routeHandler } from "@/lib/api/route-handler";
 import { SaveLesson } from "@/modules/course/application/save-lesson";
+import { CourseNotFoundError } from "@/modules/course/domain/errors/course-not-found";
 import { PrismaCourseRepository } from "@/modules/course/infrastructure/persistence/prisma-course-repository";
-import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const saveLessonSchema = z.object({
@@ -46,16 +47,24 @@ const saveLessonSchema = z.object({
     .optional(),
 });
 
-export const POST = routeHandler(async ({ req, params }) => {
-  const { id: courseId, chapterId } = params;
-  const parsedInput = saveLessonSchema.parse(await req.json());
-  const service = new SaveLesson(new PrismaCourseRepository());
-  await service.execute(
-    {
-      ...parsedInput,
-      chapterId, // Allow id to be optional
-    } as any,
-    courseId,
-  );
-  return NextResponse.json({ message: "Lesson saved successfully" }, { status: 201 });
-});
+export const POST = routeHandler(
+  { schema: saveLessonSchema, name: "save-lesson", authenticated: true },
+  async ({ req, params }) => {
+    const { id: courseId, chapterId } = params;
+    const parsedInput = saveLessonSchema.parse(await req.json());
+    const service = new SaveLesson(new PrismaCourseRepository());
+    await service.execute(
+      {
+        ...parsedInput,
+        chapterId, // Allow id to be optional
+      } as any,
+      courseId,
+    );
+  },
+  (error) => {
+    if (error instanceof CourseNotFoundError) {
+      HttpNextResponse.domainError(error, 404);
+    }
+    return HttpNextResponse.internalServerError();
+  },
+);

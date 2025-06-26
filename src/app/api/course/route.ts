@@ -1,10 +1,10 @@
+import { HttpNextResponse } from "@/lib/api/http-next-response";
 import { routeHandler } from "@/lib/api/route-handler";
 import { Primitives } from "@/lib/ddd/types/primitives";
 import { SaveCourse } from "@/modules/course/application/save-course";
 import { SearchCourses } from "@/modules/course/application/search-courses";
 import { Course } from "@/modules/course/domain/course";
 import { PrismaCourseRepository } from "@/modules/course/infrastructure/persistence/prisma-course-repository";
-import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const createCourseSchema = z.object({
@@ -27,35 +27,30 @@ const createCourseSchema = z.object({
   }),
 });
 
-export const POST = routeHandler(async ({ req, user, params, searchParams }) => {
-  const parsedInpit = createCourseSchema.parse(await req.json());
-  const service = new SaveCourse(new PrismaCourseRepository());
+export const POST = routeHandler(
+  { schema: createCourseSchema, name: "create-course", authenticated: true },
+  async ({ req, user, body }) => {
+    const service = new SaveCourse(new PrismaCourseRepository());
 
-  await service.execute({
-    ...parsedInpit,
-    authorId: user.id,
-  } as Primitives<Course>);
+    await service.execute({
+      ...body,
+      authorId: user.id,
+    } as Primitives<Course>);
+  },
+  (error) => {
+    return HttpNextResponse.internalServerError();
+  },
+);
 
-  return NextResponse.json(
-    {
-      message: "Course created successfully",
-    },
-    {
-      status: 201,
-    },
-  );
-});
+export const GET = routeHandler(
+  { name: "search-courses", authenticated: true },
+  async ({}) => {
+    const service = new SearchCourses(new PrismaCourseRepository());
+    const courses = await service.execute();
 
-export const GET = routeHandler(async ({}) => {
-  const service = new SearchCourses(new PrismaCourseRepository());
-  const courses = await service.execute();
-
-  return NextResponse.json(
-    {
-      data: courses,
-    },
-    {
-      status: 200,
-    },
-  );
-});
+    return HttpNextResponse.json({ data: courses });
+  },
+  (error) => {
+    return HttpNextResponse.internalServerError();
+  },
+);

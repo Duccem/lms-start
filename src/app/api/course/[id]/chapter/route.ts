@@ -1,9 +1,10 @@
+import { HttpNextResponse } from "@/lib/api/http-next-response";
 import { routeHandler } from "@/lib/api/route-handler";
 import { Primitives } from "@/lib/ddd/types/primitives";
 import { SaveChapter } from "@/modules/course/application/save-chapter";
 import { Chapter } from "@/modules/course/domain/chapter";
+import { CourseNotFoundError } from "@/modules/course/domain/errors/course-not-found";
 import { PrismaCourseRepository } from "@/modules/course/infrastructure/persistence/prisma-course-repository";
-import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const saveChapterSchema = z.object({
@@ -13,23 +14,25 @@ const saveChapterSchema = z.object({
   position: z.number().int().min(0, "Position must be a non-negative integer"),
 });
 
-export const POST = routeHandler(async ({ req, params }) => {
-  const parsedInput = saveChapterSchema.parse(await req.json());
-  const { id } = params;
-  const service = new SaveChapter(new PrismaCourseRepository());
+export const POST = routeHandler(
+  { schema: saveChapterSchema, name: "save-chapter", authenticated: true },
+  async ({ req, params }) => {
+    const parsedInput = saveChapterSchema.parse(await req.json());
+    const { id } = params;
+    const service = new SaveChapter(new PrismaCourseRepository());
 
-  await service.execute({
-    id: parsedInput.id,
-    title: parsedInput.title,
-    description: parsedInput.description,
-    position: parsedInput.position,
-    courseId: id,
-  } as Primitives<Chapter>);
-
-  return NextResponse.json(
-    {
-      message: "Chapter saved successfully",
-    },
-    { status: 201 },
-  );
-});
+    await service.execute({
+      id: parsedInput.id,
+      title: parsedInput.title,
+      description: parsedInput.description,
+      position: parsedInput.position,
+      courseId: id,
+    } as Primitives<Chapter>);
+  },
+  (error) => {
+    if (error instanceof CourseNotFoundError) {
+      return HttpNextResponse.domainError(error, 404);
+    }
+    return HttpNextResponse.internalServerError();
+  },
+);
