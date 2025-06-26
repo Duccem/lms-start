@@ -18,6 +18,8 @@ export const env = createEnv({
     POLAR_SUCCESS_URL: z.string().optional(),
     GOOGLE_GENERATIVE_AI_API_KEY: z.string().optional(),
     NOVU_SECRET_KEY: z.string(),
+    RESEND_API_KEY: z.string(),
+    EMAIL_FROM: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_BASE_URL: z.string(),
@@ -44,6 +46,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_KEY: process.env.NEXT_PUBLIC_SUPABASE_KEY,
     GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
     NOVU_SECRET_KEY: process.env.NOVU_SECRET_KEY,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    EMAIL_FROM: process.env.EMAIL_FROM,
   },
 });
-

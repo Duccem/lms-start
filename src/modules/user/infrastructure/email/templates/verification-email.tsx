@@ -1,3 +1,4 @@
+import { env } from "@/lib/env";
 import {
   Body,
   Container,
@@ -11,67 +12,55 @@ import {
   Section,
   Text,
 } from "@react-email/components";
-import { env } from "@/lib/env";
 
 interface VerifyEmailProps {
   verificationCode?: string;
 }
 
-const baseUrl = `https://${env.NEXT_PUBLIC_BASE_URL}`;
+const baseUrl = env.NEXT_PUBLIC_BASE_URL ? `https://${env.NEXT_PUBLIC_BASE_URL}` : "";
 
-export default function VerifyEmail({
-  verificationCode = "596853",
-}: VerifyEmailProps) {
+export default function VerifyEmail({ verificationCode }: VerifyEmailProps) {
   return (
     <Html>
       <Head />
-      <Preview>Código de verificación de Schola Pro</Preview>
       <Body style={main}>
+        <Preview>AWS Email Verification</Preview>
         <Container style={container}>
           <Section style={coverSection}>
             <Section style={imageSection}>
-              <Img
-                src={`${baseUrl}/svg/logo.svg`}
-                width="75"
-                height="45"
-                alt="AWS's Logo"
-              />
+              <Img src={`${baseUrl}/images/logo.svg`} width="75" height="45" alt="Logo" />
             </Section>
             <Section style={upperSection}>
               <Heading style={h1}>Verify your email address</Heading>
               <Text style={mainText}>
-                Thanks for starting the new AWS account creation process. We
-                want to make sure it`s really you. Please enter the following
-                verification code when prompted. If you don&apos;t want to
-                create an account, you can ignore this message.
+                Thanks for starting the new Schola account creation process. We want to make sure
+                it's really you. Please enter the following verification code when prompted. If you
+                don&apos;t want to create an account, you can ignore this message.
               </Text>
               <Section style={verificationSection}>
                 <Text style={verifyText}>Verification code</Text>
 
                 <Text style={codeText}>{verificationCode}</Text>
-                <Text style={validityText}>
-                  (This code is valid for 10 minutes)
-                </Text>
+                <Text style={validityText}>(This code is valid for 10 minutes)</Text>
               </Section>
             </Section>
             <Hr />
             <Section style={lowerSection}>
               <Text style={cautionText}>
-                Amazon Web Services will never email you and ask you to disclose
-                or verify your password, credit card, or banking account number.
+                Schola pro will never email you and ask you to disclose or verify your password,
+                credit card, or banking account number.
               </Text>
             </Section>
           </Section>
           <Text style={footerText}>
-            This message was produced and distributed by Amazon Web Services,
-            Inc., 410 Terry Ave. North, Seattle, WA 98109. © 2022, Amazon Web
-            Services, Inc.. All rights reserved. AWS is a registered trademark
-            of{" "}
-            <Link href="https://amazon.com" target="_blank" style={link}>
-              Amazon.com
+            This message was produced and distributed by Schola pro, Inc., 410 Terry Ave. North,
+            Seattle, WA 98109. © 2022, Schola pro, Inc.. All rights reserved. AWS is a registered
+            trademark of{" "}
+            <Link href="https://schola.com" target="_blank" style={link}>
+              Schola.com
             </Link>
             , Inc. View our{" "}
-            <Link href="https://amazon.com" target="_blank" style={link}>
+            <Link href="https://schola.com" target="_blank" style={link}>
               privacy policy
             </Link>
             .
@@ -81,6 +70,10 @@ export default function VerifyEmail({
     </Html>
   );
 }
+
+VerifyEmail.PreviewProps = {
+  verificationCode: "596853",
+} satisfies VerifyEmailProps;
 
 const main = {
   backgroundColor: "#fff",
@@ -168,4 +161,3 @@ const verificationSection = {
 const mainText = { ...text, marginBottom: "14px" };
 
 const cautionText = { ...text, margin: "0px" };
-

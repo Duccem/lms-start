@@ -1,3 +1,5 @@
+import { SendVerificationEmail } from "@/modules/user/application/send-verification-email";
+import { ResendUserEmailSender } from "@/modules/user/infrastructure/email/resend-user-email-sender";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
@@ -6,7 +8,6 @@ import { headers } from "next/headers";
 import { cache } from "react";
 import { database } from "../database";
 import { env } from "../env";
-import { novu } from "../notifications";
 
 export const auth = betterAuth({
   database: prismaAdapter(database, { provider: "postgresql" }),
@@ -29,16 +30,11 @@ export const auth = betterAuth({
     bearer(),
     emailOTP({
       sendVerificationOTP: async ({ email, otp, type }) => {
-        await novu.trigger({
-          workflowId: type,
-          to: {
-            subscriberId: email,
-            email,
-          },
-          payload: {
-            code: otp,
-          },
-        });
+        const sender = new ResendUserEmailSender();
+        if (type === "email-verification") {
+          const service = new SendVerificationEmail(sender);
+          await service.execute(email, otp);
+        }
       },
       sendVerificationOnSignUp: true,
       otpLength: 6,
