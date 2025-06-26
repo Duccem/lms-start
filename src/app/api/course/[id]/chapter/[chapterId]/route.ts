@@ -6,7 +6,10 @@ import { CourseNotFoundError } from "@/modules/course/domain/errors/course-not-f
 import { PrismaCourseRepository } from "@/modules/course/infrastructure/persistence/prisma-course-repository";
 
 export const DELETE = routeHandler(
-  { name: "delete-chapter" },
+  {
+    name: "delete-chapter",
+    cache: { revalidate: true, tags: (params) => ["courses", `user:${params.user.id}`] },
+  },
   async ({ params }) => {
     const { id: courseId, chapterId } = params;
 

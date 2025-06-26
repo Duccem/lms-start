@@ -101,7 +101,7 @@ export const routeHandler = <R, T extends DomainError, P, Q>(
  * @throws Unauthenticated error if the user is not authenticated.
  */
 async function authentication(authenticated?: boolean): Promise<BetterSession | null> {
-  if (!authenticated) {
+  if (authenticated === false) {
     return null;
   }
   const session = await getSession();
