@@ -15,7 +15,7 @@ const saveChapterSchema = z.object({
 });
 
 export const POST = routeHandler(
-  { schema: saveChapterSchema, name: "save-chapter", authenticated: true },
+  { schema: saveChapterSchema, name: "save-chapter" },
   async ({ req, params }) => {
     const parsedInput = saveChapterSchema.parse(await req.json());
     const { id } = params;

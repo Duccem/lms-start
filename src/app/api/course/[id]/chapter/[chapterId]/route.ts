@@ -21,7 +21,6 @@ export const DELETE = routeHandler(
       case error instanceof ChapterNotDeleteableError:
         return HttpNextResponse.domainError(error, 400);
       default:
-        console.error("Unexpected error:", error);
         return HttpNextResponse.internalServerError();
     }
   },

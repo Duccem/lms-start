@@ -26,6 +26,10 @@ export class HttpNextResponse {
     return new NextResponse(null, { status: 204 });
   }
 
+  static error(message: string): NextResponse {
+    return new NextResponse(null, { status: 400 });
+  }
+
   static created(): NextResponse {
     return new NextResponse(null, { status: 201 });
   }

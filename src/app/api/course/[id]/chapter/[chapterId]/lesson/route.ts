@@ -48,7 +48,7 @@ const saveLessonSchema = z.object({
 });
 
 export const POST = routeHandler(
-  { schema: saveLessonSchema, name: "save-lesson", authenticated: true },
+  { schema: saveLessonSchema, name: "save-lesson" },
   async ({ req, params }) => {
     const { id: courseId, chapterId } = params;
     const parsedInput = saveLessonSchema.parse(await req.json());

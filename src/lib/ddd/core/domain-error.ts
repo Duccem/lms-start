@@ -1,5 +1,7 @@
 /**
  * Representation of a domain error that can be thrown by the domain layer.
+ * @class DomainError
+ * @extends Error
  */
 export class DomainError extends Error {
   protected readonly timestamp: string;

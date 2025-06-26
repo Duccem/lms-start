@@ -28,8 +28,11 @@ const createCourseSchema = z.object({
 });
 
 export const POST = routeHandler(
-  { schema: createCourseSchema, name: "create-course", authenticated: true },
-  async ({ req, user, body }) => {
+  {
+    schema: createCourseSchema,
+    name: "create-course",
+  },
+  async ({ user, body }) => {
     const service = new SaveCourse(new PrismaCourseRepository());
 
     await service.execute({
@@ -37,18 +40,15 @@ export const POST = routeHandler(
       authorId: user.id,
     } as Primitives<Course>);
   },
-  (error) => {
-    return HttpNextResponse.internalServerError();
-  },
 );
 
 export const GET = routeHandler(
-  { name: "search-courses", authenticated: true },
+  { name: "search-courses", cache: { tags: ["courses"], ttl: 60 } },
   async ({}) => {
     const service = new SearchCourses(new PrismaCourseRepository());
     const courses = await service.execute();
 
-    return HttpNextResponse.json({ data: courses });
+    return { data: courses };
   },
   (error) => {
     return HttpNextResponse.internalServerError();
